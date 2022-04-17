@@ -1,0 +1,38 @@
+// Turquoise
+$turquoise-50: #dbfefe;
+$turquoise-100: #b6f6f6;
+$turquoise-200: #8deded;
+$turquoise-300: #64e4e4;
+$turquoise-400: #3cdddd;
+$turquoise-500: #22c3c3;
+$turquoise-600: #129898;
+$turquoise-700: #026e6e;
+$turquoise-800: #004242;
+$turquoise-900: #001818;
+
+// Gray
+$gray-50: #f2f2f2;
+$gray-100: #d9d9d9;
+$gray-200: #bfbfbf;
+$gray-300: #a6a6a6;
+$gray-400: #8c8c8c;
+$gray-500: #737373;
+$gray-600: #595959;
+$gray-700: #404040;
+$gray-800: #262626;
+$gray-850: #181818;
+$gray-870: #151515;
+$gray-900: #0d0d0d;
+
+/***** GRADIENTS *****/
+$turquoise-gradient-600-800: linear-gradient(
+  116.98deg,
+  $turquoise-600 27.83%,
+  $turquoise-800 83.8%
+);
+
+$gray-gradient-870-850: linear-gradient(
+  125.48deg,
+  $gray-870 7.3%,
+  $gray-850 90.33%
+);

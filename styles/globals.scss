@@ -1,16 +1,57 @@
+@use "variables/colors";
+@use "variables/fonts";
+
 html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: fonts.$open-sans;
+  background: colors.$gray-gradient-870-850;
+  height: 100%;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: fonts.$nunito;
+  font-weight: fonts.$bold;
 }
 
-* {
-  box-sizing: border-box;
+h1 {
+  font-size: fonts.$h1-font-size;
+}
+h2 {
+  font-size: fonts.$h2-font-size;
+}
+h3 {
+  font-size: fonts.$h3-font-size;
+}
+h4 {
+  font-size: fonts.$h4-font-size;
+}
+h5 {
+  font-size: fonts.$h5-font-size;
+}
+h6 {
+  font-size: fonts.$h6-font-size;
+}
+
+p,
+a,
+li,
+button,
+input {
+  font-size: fonts.$base-font-size;
+  font-family: fonts.$open-sans;
+  font-weight: fonts.$regular;
+  border: none;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:visited {
+    border: none;
+    outline: none;
+  }
 }
