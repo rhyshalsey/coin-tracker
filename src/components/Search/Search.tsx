@@ -3,6 +3,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import classnames from "classnames";
 
 import styles from "./Search.module.scss";
+import Dropdown from "../Dropdown/Dropdown";
 
 enum actions {
   SEARCH_INPUT_BLURRED = "SEARCH_INPUT_BLURRED",
@@ -67,10 +68,18 @@ export default function Search() {
           type="text"
           className={styles.searchInput}
           placeholder="Search..."
+          value={searchValue}
+          onChange={(e) =>
+            dispatch({
+              type: actions.SEARCH_INPUT_TEXT_CHANGED,
+              payload: e.target.value,
+            })
+          }
           onBlur={() => dispatch({ type: actions.SEARCH_INPUT_BLURRED })}
           onFocus={() => dispatch({ type: actions.SEARCH_INPUT_FOCUSED })}
         />
       </div>
+      <Dropdown />
     </div>
   );
 }

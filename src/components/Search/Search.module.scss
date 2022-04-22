@@ -7,6 +7,7 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
 
 .searchContainer {
   max-width: 500px;
+  position: relative;
 
   &.focussed .searchInputContainer .searchIconWrapper svg path {
     fill: colors.$turquoise-400;
