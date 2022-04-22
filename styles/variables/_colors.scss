@@ -1,4 +1,18 @@
-// Turquoise
+// Primary color (teal)
+$primary-1: var(--mint1);
+$primary-2: var(--mint2);
+$primary-3: var(--mint3);
+$primary-4: var(--mint4);
+$primary-5: var(--mint5);
+$primary-6: var(--mint6);
+$primary-7: var(--mint7);
+$primary-8: var(--mint8);
+$primary-9: var(--mint9);
+$primary-10: var(--mint10);
+$primary-11: var(--mint11);
+$primary-12: var(--mint12);
+
+// Turquoise (old)
 $turquoise-50: #dbfefe;
 $turquoise-100: #b6f6f6;
 $turquoise-200: #8deded;
@@ -11,6 +25,20 @@ $turquoise-800: #004242;
 $turquoise-900: #001818;
 
 // Gray
+$gray-1: var(--slate1);
+$gray-2: var(--slate2);
+$gray-3: var(--slate3);
+$gray-4: var(--slate4);
+$gray-5: var(--slate5);
+$gray-6: var(--slate6);
+$gray-7: var(--slate7);
+$gray-8: var(--slate8);
+$gray-9: var(--slate9);
+$gray-10: var(--slate10);
+$gray-11: var(--slate11);
+$gray-12: var(--slate12);
+
+// Gray (old)
 $gray-50: #f2f2f2;
 $gray-100: #d9d9d9;
 $gray-200: #bfbfbf;
@@ -36,3 +64,9 @@ $gray-gradient-870-850: linear-gradient(
   $gray-870 7.3%,
   $gray-850 90.33%
 );
+
+// $gray-gradient-870-850: linear-gradient(
+//   125.48deg,
+//   $gray-12 7.3%,
+//   $primary-12 90.33%
+// );

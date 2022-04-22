@@ -31,7 +31,7 @@ const reducer = (state: State, action: Action) => {
     case actions.SEARCH_INPUT_TEXT_CHANGED:
       return {
         ...state,
-        searchTerm: action.payload,
+        searchValue: action.payload,
       };
     case actions.SEARCH_INPUT_BLURRED:
       return {

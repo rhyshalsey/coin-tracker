@@ -2,7 +2,8 @@
 @use "styles/variables/fonts";
 @use "styles/variables/general";
 
-$search-blurred-color: colors.$gray-300;
+$search-focussed-color: colors.$primary-8;
+$search-blurred-font-color: colors.$gray-11;
 $search-icon-width: fonts.$large-body-font-size * 2.5;
 
 .searchContainer {
@@ -10,7 +11,7 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
   position: relative;
 
   &.focussed .searchInputContainer .searchIconWrapper svg path {
-    fill: colors.$turquoise-400;
+    // fill: $search-focussed-color;
   }
 
   .searchInputContainer {
@@ -29,31 +30,37 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
         height: fonts.$large-body-font-size * 1.1;
 
         path {
-          fill: $search-blurred-color;
+          fill: $search-blurred-font-color;
           transition: general.input-transition(fill);
         }
       }
     }
 
     .searchInput {
-      background: rgba(white, 0.1);
+      background-color: colors.$gray-3;
+      color: white;
+      // background: rgba(white, 0.1);
       padding: general.$large-input-padding;
       padding-left: $search-icon-width;
       font-size: fonts.$large-body-font-size;
       border-radius: general.$round-corners;
       width: 100%;
-      caret-color: colors.$turquoise-100;
+      caret-color: $search-focussed-color;
       outline: 2px solid transparent;
 
       transition: general.input-transition(outline);
 
       &::placeholder {
-        color: $search-blurred-color;
+        color: $search-blurred-font-color;
+        transition: general.input-transition(color);
       }
 
       &:focus {
-        outline: 2px solid colors.$turquoise-400;
-        color: white;
+        outline: 2px solid $search-focussed-color;
+
+        &::placeholder {
+          // color: $search-focussed-color;
+        }
       }
     }
   }
