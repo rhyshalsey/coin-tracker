@@ -3,7 +3,7 @@
 @use "styles/variables/general";
 
 $search-focussed-color: colors.$primary-8;
-$search-blurred-font-color: colors.$gray-11;
+$search-blurred-font-color: colors.$neutral-11;
 $search-icon-width: fonts.$large-body-font-size * 2.5;
 
 .searchContainer {
@@ -12,6 +12,10 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
 
   &.focussed .searchInputContainer .searchIconWrapper svg path {
     // fill: $search-focussed-color;
+  }
+
+  &.error .searchInputContainer .searchInput {
+    outline-color: colors.$red-8;
   }
 
   .searchInputContainer {
@@ -37,14 +41,14 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
     }
 
     .searchInput {
-      background-color: colors.$gray-3;
-      color: colors.$gray-12;
+      background-color: colors.$neutral-3;
+      color: colors.$neutral-12;
       padding: general.$large-input-padding;
       padding-left: $search-icon-width;
       font-size: fonts.$large-body-font-size;
       border-radius: general.$round-corners;
       width: 100%;
-      caret-color: colors.$gray-12;
+      caret-color: colors.$neutral-12;
       outline: 2px solid transparent;
 
       transition: general.input-transition(outline);
@@ -55,7 +59,7 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
       }
 
       &:focus {
-        outline: 2px solid $search-focussed-color;
+        outline-color: $search-focussed-color;
 
         &::placeholder {
           // color: $search-focussed-color;

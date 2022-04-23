@@ -7,7 +7,7 @@ import styles from "styles/pages/Home.module.scss";
 
 const Home: NextPage = () => {
   return (
-    <div className={styles.homeContainer}>
+    <div id={styles.homeContainer} className="page">
       <Head>
         <title>Coin Tracker</title>
         <meta name="description" content="Check out Crypto prices" />

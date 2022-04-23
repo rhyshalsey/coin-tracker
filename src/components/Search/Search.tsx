@@ -1,7 +1,11 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { Combobox } from "@headlessui/react";
 import { IoSearchSharp } from "react-icons/io5";
 import classnames from "classnames";
+import { useQuery } from "react-query";
+
+import Toast from "src/components/Toast/Toast";
+import { fetcher } from "../../utils/request";
 
 import styles from "./Search.module.scss";
 import Dropdown from "../Dropdown/Dropdown";
@@ -10,11 +14,15 @@ enum actions {
   SEARCH_INPUT_BLURRED = "SEARCH_INPUT_BLURRED",
   SEARCH_INPUT_FOCUSED = "SEARCH_INPUT_FOCUSED",
   SEARCH_INPUT_TEXT_CHANGED = "SEARCH_INPUT_TEXT_CHANGED",
+  TOAST_OPEN_CHANGED = "TOAST_OPEN_CHANGED",
+  ERROR_GETTING_DATA = "ERROR_GETTING_DATA",
 }
 
 type State = {
   searchFocussed: boolean;
   searchValue: string;
+  searchError: boolean;
+  errorToastOpen: boolean;
 };
 
 interface Action {
@@ -25,6 +33,8 @@ interface Action {
 const defaultState: State = {
   searchFocussed: false,
   searchValue: "",
+  searchError: false,
+  errorToastOpen: false,
 };
 
 const reducer = (state: State, action: Action) => {
@@ -44,16 +54,47 @@ const reducer = (state: State, action: Action) => {
         ...state,
         searchFocussed: true,
       };
+    case actions.TOAST_OPEN_CHANGED:
+      console.log("TOAST_OPEN_CHANGED");
+      return {
+        ...state,
+        errorToastOpen: action.payload,
+      };
+    case actions.ERROR_GETTING_DATA:
+      console.log("ERROR_GETTING_DATA");
+      return {
+        ...state,
+        searchError: true,
+        errorToastOpen: true,
+      };
     default:
       return state;
   }
 };
 
+async function getDefaultCryptos() {
+  //return fetcher("https://api.coingecko.com/api/v3/search/trending");
+  throw new Error("Not implemented");
+}
+
 export default function Search() {
-  const [{ searchValue, searchFocussed }, dispatch] = useReducer(
-    reducer,
-    defaultState
-  );
+  const [
+    { searchValue, searchFocussed, errorToastOpen, searchError },
+    dispatch,
+  ] = useReducer(reducer, defaultState);
+
+  const {
+    data,
+    error: dataFetchError,
+    isFetching,
+  } = useQuery("default-cryptos", getDefaultCryptos);
+
+  useEffect(() => {
+    if (dataFetchError) {
+      console.log("ERROR GETTING DATA");
+      dispatch({ type: actions.ERROR_GETTING_DATA });
+    }
+  }, [dataFetchError]);
 
   return (
     <div>
@@ -61,6 +102,7 @@ export default function Search() {
         as="div"
         className={classnames(styles.searchContainer, {
           [styles.focussed]: searchFocussed,
+          [styles.error]: searchError,
         })}
         value={searchValue}
         onChange={() => {}}
@@ -88,6 +130,13 @@ export default function Search() {
           </Combobox.Option>
         </Combobox.Options>
       </Combobox>
+
+      <Toast
+        open={errorToastOpen}
+        onOpenChange={(open) => {
+          dispatch({ type: actions.TOAST_OPEN_CHANGED, payload: open });
+        }}
+      />
     </div>
   );
 }
