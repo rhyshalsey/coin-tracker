@@ -1,4 +1,5 @@
 import { useReducer } from "react";
+import { Combobox } from "@headlessui/react";
 import { IoSearchSharp } from "react-icons/io5";
 import classnames from "classnames";
 
@@ -55,31 +56,38 @@ export default function Search() {
   );
 
   return (
-    <div
-      className={classnames(styles.searchContainer, {
-        [styles.focussed]: searchFocussed,
-      })}
-    >
-      <div className={styles.searchInputContainer}>
-        <div className={styles.searchIconWrapper}>
-          <IoSearchSharp />
+    <div>
+      <Combobox
+        as="div"
+        className={classnames(styles.searchContainer, {
+          [styles.focussed]: searchFocussed,
+        })}
+        value={searchValue}
+        onChange={() => {}}
+      >
+        <div className={styles.searchInputContainer}>
+          <div className={styles.searchIconWrapper}>
+            <IoSearchSharp />
+          </div>
+          <Combobox.Input
+            className={styles.searchInput}
+            placeholder="Search..."
+            onChange={(e) =>
+              dispatch({
+                type: actions.SEARCH_INPUT_TEXT_CHANGED,
+                payload: e.target.value,
+              })
+            }
+            onBlur={() => dispatch({ type: actions.SEARCH_INPUT_BLURRED })}
+            onFocus={() => dispatch({ type: actions.SEARCH_INPUT_FOCUSED })}
+          />
         </div>
-        <input
-          type="text"
-          className={styles.searchInput}
-          placeholder="Search..."
-          value={searchValue}
-          onChange={(e) =>
-            dispatch({
-              type: actions.SEARCH_INPUT_TEXT_CHANGED,
-              payload: e.target.value,
-            })
-          }
-          onBlur={() => dispatch({ type: actions.SEARCH_INPUT_BLURRED })}
-          onFocus={() => dispatch({ type: actions.SEARCH_INPUT_FOCUSED })}
-        />
-      </div>
-      <Dropdown />
+        <Combobox.Options>
+          <Combobox.Option key={"test-1"} value={"Test 1"}>
+            Test 1
+          </Combobox.Option>
+        </Combobox.Options>
+      </Combobox>
     </div>
   );
 }

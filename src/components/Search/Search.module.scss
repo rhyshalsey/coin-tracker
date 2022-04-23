@@ -38,14 +38,13 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
 
     .searchInput {
       background-color: colors.$gray-3;
-      color: white;
-      // background: rgba(white, 0.1);
+      color: colors.$gray-12;
       padding: general.$large-input-padding;
       padding-left: $search-icon-width;
       font-size: fonts.$large-body-font-size;
       border-radius: general.$round-corners;
       width: 100%;
-      caret-color: $search-focussed-color;
+      caret-color: colors.$gray-12;
       outline: 2px solid transparent;
 
       transition: general.input-transition(outline);
