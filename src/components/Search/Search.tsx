@@ -9,6 +9,7 @@ import { fetcher } from "../../utils/request";
 
 import styles from "./Search.module.scss";
 import Dropdown from "../Dropdown/Dropdown";
+import Loader, { LoaderSizes } from "../Loader/Loader";
 
 enum actions {
   SEARCH_INPUT_BLURRED = "SEARCH_INPUT_BLURRED",
@@ -109,7 +110,11 @@ export default function Search() {
       >
         <div className={styles.searchInputContainer}>
           <div className={styles.searchIconWrapper}>
-            <IoSearchSharp />
+            {!isFetching ? (
+              <Loader size={LoaderSizes.Small} />
+            ) : (
+              <IoSearchSharp />
+            )}
           </div>
           <Combobox.Input
             className={styles.searchInput}

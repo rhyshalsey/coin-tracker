@@ -1,0 +1,39 @@
+@use "styles/variables/colors";
+
+$spinner-small: 24px;
+$spinner-medium: 32px;
+$spinner-large: 48px;
+$spinner-xlarge: 64px;
+
+.spinner {
+  width: $spinner-medium;
+  height: $spinner-medium;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 3px solid colors.$neutral-11;
+  border-right: 3px solid transparent;
+  box-sizing: border-box;
+  animation: rotate 1s linear infinite;
+
+  &.small {
+    width: $spinner-small;
+    height: $spinner-small;
+  }
+  &.large {
+    width: $spinner-large;
+    height: $spinner-large;
+  }
+  &.xLarge {
+    width: $spinner-xlarge;
+    height: $spinner-xlarge;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
