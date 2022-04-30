@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import { Combobox } from "@headlessui/react";
 import { IoSearchSharp } from "react-icons/io5";
 import classnames from "classnames";
@@ -18,12 +18,12 @@ enum actions {
   ERROR_GETTING_DATA = "ERROR_GETTING_DATA",
 }
 
-type State = {
+type State = Readonly<{
   searchFocussed: boolean;
   searchValue: string;
   searchError: boolean;
   errorToastOpen: boolean;
-};
+}>;
 
 interface Action {
   type: actions;
@@ -37,7 +37,7 @@ const defaultState: State = {
   errorToastOpen: false,
 };
 
-const reducer = (state: State, action: Action) => {
+const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case actions.SEARCH_INPUT_TEXT_CHANGED:
       return {
@@ -132,6 +132,10 @@ export default function Search() {
       </Combobox>
 
       <Toast
+        title={"Search error"}
+        description={
+          "Unable to get cryptocurrency data, please try again later."
+        }
         open={errorToastOpen}
         onOpenChange={(open) => {
           dispatch({ type: actions.TOAST_OPEN_CHANGED, payload: open });

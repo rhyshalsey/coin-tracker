@@ -20,7 +20,7 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ToastPrimitive.Provider>
+      <ToastPrimitive.Provider swipeDirection="right">
         <div id="app-wrapper" className="dark-theme">
           <Component {...pageProps} />
           <ToastPrimitive.Viewport id="toast-viewport" />

@@ -2,16 +2,56 @@
 @use "styles/variables/colors";
 @use "styles/variables/fonts";
 
-.toastContainer {
+.toastRoot {
   background: colors.$neutral-12;
   padding: 12px 16px;
   display: flex;
   flex-direction: column;
   border-radius: general.$round-corners;
 
+  @media (prefers-reduced-motion: no-preference) {
+    &[data-state="open"] {
+      animation: slideIn 0.4s ease-out;
+    }
+    &[data-state="closed"] {
+      animation: slideOut 0.4s ease-out forwards;
+    }
+    &[data-swipe="move"] {
+      transform: translateX(var(--radix-toast-swipe-move-x));
+    }
+    &[data-swipe="cancel"] {
+      transform: translateX(0);
+      transition: transform 200ms ease-out;
+    }
+    &[data-swipe="end"] {
+      animation: swipeOut 100ms ease-out forwards;
+    }
+  }
+
+  .close {
+    display: flex;
+    padding: 0;
+    cursor: pointer;
+    padding: 4px 0 4px 4px;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    &:hover {
+      svg {
+        path {
+          stroke: colors.$red-8;
+        }
+      }
+    }
+  }
+
   .titleWrapper {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     width: 100%;
     padding-bottom: 4px;
     margin-top: -4px;
@@ -20,28 +60,42 @@
     .title {
       font-size: fonts.$h4-font-size;
       font-weight: fonts.$semi-bold;
-      flex: 1;
     }
+  }
 
-    .close {
-      align-self: flex-end;
-      padding: 0;
-      display: flex;
-      cursor: pointer;
-      padding: 4px 0 4px 4px;
+  .descriptionWrapper {
+    display: flex;
+    flex-direction: rpw;
+  }
+}
 
-      svg {
-        width: 24px;
-        height: 24px;
-      }
+@keyframes slideIn {
+  0% {
+    transform: translateX(calc(60% + general.$viewport-horizontal-padding));
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
 
-      &:hover {
-        svg {
-          path {
-            stroke: colors.$red-8;
-          }
-        }
-      }
-    }
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(calc(60% + general.$viewport-horizontal-padding));
+    opacity: 0;
+  }
+}
+
+@keyframes swipeOut {
+  from {
+    transform: translateX(var(--radix-toast-swipe-end-x));
+  }
+  to {
+    transform: translateX(calc(100% + general.$viewport-horizontal-padding));
   }
 }

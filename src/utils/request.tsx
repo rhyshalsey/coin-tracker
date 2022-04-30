@@ -1,4 +1,7 @@
-const fetcher = async (url: RequestInfo, method: string = "GET") => {
+const fetcher = async (
+  url: RequestInfo,
+  method: string = "GET"
+): Promise<Record<string, any>> => {
   const response = await fetch(url, { method });
 
   if (!response.ok) {
