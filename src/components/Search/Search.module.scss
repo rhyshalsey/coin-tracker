@@ -6,8 +6,12 @@ $search-focussed-color: colors.$primary-8;
 $search-blurred-font-color: colors.$neutral-11;
 $search-icon-width: fonts.$large-body-font-size * 2.5;
 
+$search-max-width: 500px;
+
+$list-item-icon-size: 24px;
+
 .searchContainer {
-  max-width: 500px;
+  max-width: $search-max-width;
   position: relative;
 
   &.focussed .searchInputContainer .searchIconWrapper svg path {
@@ -20,6 +24,7 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
 
   .searchInputContainer {
     position: relative;
+    width: 100%;
 
     .searchIconWrapper {
       position: absolute;
@@ -50,6 +55,7 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
       width: 100%;
       caret-color: colors.$neutral-12;
       outline: 2px solid transparent;
+      box-sizing: border-box;
 
       transition: general.input-transition(outline);
 
@@ -67,4 +73,66 @@ $search-icon-width: fonts.$large-body-font-size * 2.5;
       }
     }
   }
+
+  .searchOptionsContainer {
+    width: 100%;
+    max-width: $search-max-width;
+    margin-top: 8px;
+    overflow: auto;
+    max-height: 240px;
+    background: colors.$neutral-3;
+    border-radius: general.$round-corners;
+
+    .searchOption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: general.$list-item-padding;
+      font-size: fonts.$list-font-size;
+      color: colors.$neutral-12;
+      border: 1px solid transparent;
+      border-bottom: 1px solid colors.$neutral-5;
+      cursor: pointer;
+
+      &:first-child {
+        border-radius: general.$round-corners general.$round-corners 0 0;
+      }
+
+      &:last-child {
+        border-bottom-color: transparent;
+        border-radius: 0 0 general.$round-corners general.$round-corners;
+      }
+
+      &.active {
+        background: colors.$primary-4;
+        border-color: colors.$primary-8;
+      }
+
+      &.selected {
+        background: colors.$primary-5;
+      }
+
+      > div:first-child {
+        display: flex;
+        align-items: center;
+      }
+
+      .coinIconWrapper {
+        margin-right: 8px;
+      }
+
+      .coinName {
+        font-weight: fonts.$semi-bold;
+      }
+
+      .coinSymbol {
+        font-size: fonts.$list-font-size;
+        color: colors.$neutral-12;
+      }
+    }
+  }
+}
+
+:export {
+  listItemIconSize: $list-item-icon-size;
 }

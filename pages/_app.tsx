@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import * as ToastPrimitive from "@radix-ui/react-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
 
+import "reset-css";
 import "normalize.css/normalize.css";
 
 import "@radix-ui/colors/red.css";

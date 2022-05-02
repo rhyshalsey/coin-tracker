@@ -1,28 +1,45 @@
-import React, { useEffect, useReducer } from "react";
+import React, { Fragment, useEffect, useReducer } from "react";
+import Image from "next/image";
 import { Combobox } from "@headlessui/react";
 import { IoSearchSharp } from "react-icons/io5";
 import classnames from "classnames";
 import { useQuery } from "react-query";
 
 import Toast from "src/components/Toast/Toast";
+import Loader, { LoaderSizes } from "src/components/Loader/Loader";
+
 import { fetcher } from "../../utils/request";
 
-import styles from "./Search.module.scss";
-import Dropdown from "../Dropdown/Dropdown";
-import Loader, { LoaderSizes } from "../Loader/Loader";
+import styles, { listItemIconSize } from "./Search.module.scss";
 
 enum actions {
   SEARCH_INPUT_BLURRED = "SEARCH_INPUT_BLURRED",
   SEARCH_INPUT_FOCUSED = "SEARCH_INPUT_FOCUSED",
   SEARCH_INPUT_TEXT_CHANGED = "SEARCH_INPUT_TEXT_CHANGED",
+  SEARCH_OPTION_SELECTED = "SEARCH_OPTION_SELECTED",
   TOAST_OPEN_CHANGED = "TOAST_OPEN_CHANGED",
   ERROR_GETTING_DATA = "ERROR_GETTING_DATA",
 }
+
+type Cryptocurrency = Readonly<{
+  id: string;
+  coin_id: number;
+  small: string;
+  large: string;
+  market_cap_rank: number;
+  name: string;
+  price_btc: number;
+  score: number;
+  slug: string;
+  symbol: string;
+  thumb: string;
+}>;
 
 type State = Readonly<{
   searchFocussed: boolean;
   searchValue: string;
   searchError: boolean;
+  selectedOption?: Cryptocurrency | null;
   errorToastOpen: boolean;
 }>;
 
@@ -35,6 +52,7 @@ const defaultState: State = {
   searchFocussed: false,
   searchValue: "",
   searchError: false,
+  selectedOption: null,
   errorToastOpen: false,
 };
 
@@ -44,6 +62,7 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         searchValue: action.payload,
+        searchError: false,
       };
     case actions.SEARCH_INPUT_BLURRED:
       return {
@@ -55,14 +74,19 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         searchFocussed: true,
       };
+    case actions.SEARCH_OPTION_SELECTED:
+      return {
+        ...state,
+        searchValue: action.payload.name,
+        selectedOption: action.payload,
+        searchError: false,
+      };
     case actions.TOAST_OPEN_CHANGED:
-      console.log("TOAST_OPEN_CHANGED");
       return {
         ...state,
         errorToastOpen: action.payload,
       };
     case actions.ERROR_GETTING_DATA:
-      console.log("ERROR_GETTING_DATA");
       return {
         ...state,
         searchError: true,
@@ -74,15 +98,19 @@ const reducer = (state: State, action: Action): State => {
 };
 
 async function getDefaultCryptos() {
-  //return fetcher("https://api.coingecko.com/api/v3/search/trending");
-  throw new Error("Not implemented");
+  return fetcher("https://api.coingecko.com/api/v3/search/trending");
 }
 
 export default function Search() {
-  const [
-    { searchValue, searchFocussed, errorToastOpen, searchError },
-    dispatch,
-  ] = useReducer(reducer, defaultState);
+  const [state, dispatch] = useReducer(reducer, defaultState);
+
+  const {
+    searchValue,
+    searchFocussed,
+    selectedOption,
+    errorToastOpen,
+    searchError,
+  }: State = state;
 
   const {
     data,
@@ -98,19 +126,21 @@ export default function Search() {
   }, [dataFetchError]);
 
   return (
-    <div>
+    <>
       <Combobox
         as="div"
         className={classnames(styles.searchContainer, {
           [styles.focussed]: searchFocussed,
           [styles.error]: searchError,
         })}
-        value={searchValue}
-        onChange={() => {}}
+        value={selectedOption}
+        onChange={(coinData: Cryptocurrency) =>
+          dispatch({ type: actions.SEARCH_OPTION_SELECTED, payload: coinData })
+        }
       >
-        <div className={styles.searchInputContainer}>
+        <Combobox.Button as="div" className={styles.searchInputContainer}>
           <div className={styles.searchIconWrapper}>
-            {!isFetching ? (
+            {isFetching ? (
               <Loader size={LoaderSizes.Small} />
             ) : (
               <IoSearchSharp />
@@ -119,6 +149,9 @@ export default function Search() {
           <Combobox.Input
             className={styles.searchInput}
             placeholder="Search..."
+            displayValue={(coinData: Cryptocurrency) =>
+              coinData ? coinData.name : searchValue
+            }
             onChange={(e) =>
               dispatch({
                 type: actions.SEARCH_INPUT_TEXT_CHANGED,
@@ -128,11 +161,36 @@ export default function Search() {
             onBlur={() => dispatch({ type: actions.SEARCH_INPUT_BLURRED })}
             onFocus={() => dispatch({ type: actions.SEARCH_INPUT_FOCUSED })}
           />
-        </div>
-        <Combobox.Options>
-          <Combobox.Option key={"test-1"} value={"Test 1"}>
-            Test 1
-          </Combobox.Option>
+        </Combobox.Button>
+        <Combobox.Options className={styles.searchOptionsContainer}>
+          {data?.coins &&
+            data.coins
+              .filter((_: any, index: number) => index <= 4)
+              .map(({ item }: any) => (
+                <Combobox.Option key={item.id} value={item} as={Fragment}>
+                  {({ active, selected }) => (
+                    <li
+                      className={classnames(styles.searchOption, {
+                        [styles.active]: active,
+                        [styles.selected]: selected,
+                      })}
+                    >
+                      <div>
+                        <div className={styles.coinIconWrapper}>
+                          <Image
+                            src={item.thumb}
+                            alt={item.name}
+                            width={listItemIconSize}
+                            height={listItemIconSize}
+                          />
+                        </div>
+                        <span className={styles.coinName}>{item.name}</span>
+                      </div>
+                      <span className={styles.coinSymbol}>{item.symbol}</span>
+                    </li>
+                  )}
+                </Combobox.Option>
+              ))}
         </Combobox.Options>
       </Combobox>
 
@@ -146,6 +204,6 @@ export default function Search() {
           dispatch({ type: actions.TOAST_OPEN_CHANGED, payload: open });
         }}
       />
-    </div>
+    </>
   );
 }

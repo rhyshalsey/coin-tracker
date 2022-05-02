@@ -8,6 +8,8 @@ $round-corners: 8px;
 $input-padding: 8px 12px;
 $large-input-padding: 16px 24px;
 
+$list-item-padding: 8px 12px;
+
 /**** Transitions ****/
 @function input-transition($property) {
   @return transition(0.25s, $property);

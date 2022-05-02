@@ -15,7 +15,6 @@ const Toast = ({ title, description, open, onOpenChange }: ToastProps) => (
     className={styles.toastRoot}
     open={open}
     onOpenChange={onOpenChange}
-    duration={1000000}
   >
     {title && (
       <div className={styles.titleWrapper}>
