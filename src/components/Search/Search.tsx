@@ -148,7 +148,6 @@ export default function Search() {
 
   useEffect(() => {
     if (dataFetchError) {
-      console.log("ERROR GETTING DATA");
       dispatch({ type: actions.ERROR_GETTING_DATA });
     }
   }, [dataFetchError]);
@@ -171,7 +170,7 @@ export default function Search() {
             {isFetching ? (
               <Loader size={LoaderSizes.Small} />
             ) : (
-              <IoSearchSharp />
+              <IoSearchSharp data-testid="search-icon" />
             )}
           </div>
           <Combobox.Input

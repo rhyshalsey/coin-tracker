@@ -2,8 +2,23 @@ import { rest } from "msw";
 
 export const handlers = [
   rest.get("https://api.coingecko.com/api/v3/search", (req, res, ctx) => {
-    console.log(req);
-    return res(ctx.json({}));
+    const query = req.url.searchParams.get("query");
+    return res(
+      ctx.json({
+        coins: [
+          {
+            id: "crypto-id",
+            name: query,
+            symbol: "AAA",
+            market_cap_rank: 2,
+            thumb:
+              "https://assets.coingecko.com/coins/images/279/thumb/ethereum.png",
+            large:
+              "https://assets.coingecko.com/coins/images/279/large/ethereum.png",
+          },
+        ],
+      })
+    );
   }),
   rest.get(
     "https://api.coingecko.com/api/v3/search/trending",
