@@ -4,13 +4,16 @@ import { Combobox } from "@headlessui/react";
 import { IoSearchSharp } from "react-icons/io5";
 import classnames from "classnames";
 import { useQuery } from "react-query";
+import Fuse from "fuse.js";
 
 import Toast from "src/components/Toast/Toast";
 import Loader, { LoaderSizes } from "src/components/Loader/Loader";
 
 import { fetcher } from "../../utils/request";
 
-import styles, { listItemIconSize } from "./Search.module.scss";
+import { coinGeckoKeys } from "src/constants";
+
+import styles from "./Search.module.scss";
 
 enum actions {
   SEARCH_INPUT_BLURRED = "SEARCH_INPUT_BLURRED",
@@ -23,14 +26,14 @@ enum actions {
 
 type Cryptocurrency = Readonly<{
   id: string;
-  coin_id: number;
-  small: string;
+  // coin_id: number;
+  // small: string;
   large: string;
   market_cap_rank: number;
   name: string;
-  price_btc: number;
-  score: number;
-  slug: string;
+  // price_btc: number;
+  // score: number;
+  // slug: string;
   symbol: string;
   thumb: string;
 }>;
@@ -97,8 +100,29 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-async function getDefaultCryptos() {
-  return fetcher("https://api.coingecko.com/api/v3/search/trending");
+async function getTrendingCrypto() {
+  const response = await fetcher(
+    "https://api.coingecko.com/api/v3/search/trending"
+  );
+
+  return {
+    ...response,
+    coins: response.coins.map(({ item }: { item: Cryptocurrency }) => item),
+  };
+}
+
+async function searchCrypto(query: string) {
+  const response = await fetcher(
+    `https://api.coingecko.com/api/v3/search?query=${query}`
+  );
+
+  // Fuzzy search to improve Coingecko results
+  const fuse = new Fuse(response.coins, { keys: ["name", "symbol"] });
+
+  return {
+    ...response,
+    coins: fuse.search(query).map(({ item }) => item),
+  };
 }
 
 export default function Search() {
@@ -116,7 +140,11 @@ export default function Search() {
     data,
     error: dataFetchError,
     isFetching,
-  } = useQuery("default-cryptos", getDefaultCryptos);
+  } = useQuery(
+    searchValue ? coinGeckoKeys.search(searchValue) : coinGeckoKeys.trending(),
+    ({ queryKey: [, , query] }) =>
+      query ? searchCrypto(query) : getTrendingCrypto()
+  );
 
   useEffect(() => {
     if (dataFetchError) {
@@ -166,7 +194,7 @@ export default function Search() {
           {data?.coins &&
             data.coins
               .filter((_: any, index: number) => index <= 4)
-              .map(({ item }: any) => (
+              .map((item: Cryptocurrency) => (
                 <Combobox.Option key={item.id} value={item} as={Fragment}>
                   {({ active, selected }) => (
                     <li
@@ -180,8 +208,8 @@ export default function Search() {
                           <Image
                             src={item.thumb}
                             alt={item.name}
-                            width={listItemIconSize}
-                            height={listItemIconSize}
+                            width={styles.listItemIconSize}
+                            height={styles.listItemIconSize}
                           />
                         </div>
                         <span className={styles.coinName}>{item.name}</span>
