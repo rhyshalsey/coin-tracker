@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useReducer } from "react";
+import { useDispatch } from "react-redux";
 import Image from "next/image";
 import { Combobox } from "@headlessui/react";
 import { IoSearchSharp } from "react-icons/io5";
@@ -14,6 +15,7 @@ import { fetcher } from "../../utils/request";
 import { coinGeckoKeys } from "src/constants";
 
 import styles from "./Search.module.scss";
+import { symbolSelected } from "src/features/appSlice";
 
 enum actions {
   SEARCH_INPUT_BLURRED = "SEARCH_INPUT_BLURRED",
@@ -126,7 +128,9 @@ async function searchCrypto(query: string) {
 }
 
 export default function Search() {
-  const [state, dispatch] = useReducer(reducer, defaultState);
+  const dispatch = useDispatch();
+
+  const [state, localDispatch] = useReducer(reducer, defaultState);
 
   const {
     searchValue,
@@ -148,7 +152,7 @@ export default function Search() {
 
   useEffect(() => {
     if (dataFetchError) {
-      dispatch({ type: actions.ERROR_GETTING_DATA });
+      localDispatch({ type: actions.ERROR_GETTING_DATA });
     }
   }, [dataFetchError]);
 
@@ -161,9 +165,13 @@ export default function Search() {
           [styles.error]: searchError,
         })}
         value={selectedOption}
-        onChange={(coinData: Cryptocurrency) =>
-          dispatch({ type: actions.SEARCH_OPTION_SELECTED, payload: coinData })
-        }
+        onChange={(coinData: Cryptocurrency) => {
+          localDispatch({
+            type: actions.SEARCH_OPTION_SELECTED,
+            payload: coinData,
+          });
+          dispatch(symbolSelected(coinData.symbol));
+        }}
       >
         <Combobox.Button as="div" className={styles.searchInputContainer}>
           <div className={styles.searchIconWrapper}>
@@ -180,13 +188,15 @@ export default function Search() {
               coinData ? coinData.name : searchValue
             }
             onChange={(e) =>
-              dispatch({
+              localDispatch({
                 type: actions.SEARCH_INPUT_TEXT_CHANGED,
                 payload: e.target.value,
               })
             }
-            onBlur={() => dispatch({ type: actions.SEARCH_INPUT_BLURRED })}
-            onFocus={() => dispatch({ type: actions.SEARCH_INPUT_FOCUSED })}
+            onBlur={() => localDispatch({ type: actions.SEARCH_INPUT_BLURRED })}
+            onFocus={() =>
+              localDispatch({ type: actions.SEARCH_INPUT_FOCUSED })
+            }
           />
         </Combobox.Button>
         <Combobox.Options className={styles.searchOptionsContainer}>
@@ -228,7 +238,7 @@ export default function Search() {
         }
         open={errorToastOpen}
         onOpenChange={(open) => {
-          dispatch({ type: actions.TOAST_OPEN_CHANGED, payload: open });
+          localDispatch({ type: actions.TOAST_OPEN_CHANGED, payload: open });
         }}
       />
     </>

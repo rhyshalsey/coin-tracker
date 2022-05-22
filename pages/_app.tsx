@@ -1,6 +1,9 @@
 import type { AppProps } from "next/app";
 import * as ToastPrimitive from "@radix-ui/react-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Provider } from "react-redux";
+
+import { store } from "src/utils/store";
 
 import "reset-css";
 import "normalize.css/normalize.css";
@@ -20,14 +23,16 @@ const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastPrimitive.Provider swipeDirection="right">
-        <div id="app-wrapper" className="dark-theme">
-          <Component {...pageProps} />
-          <ToastPrimitive.Viewport id="toast-viewport" />
-        </div>
-      </ToastPrimitive.Provider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <ToastPrimitive.Provider swipeDirection="right">
+          <div id="app-wrapper" className="dark-theme">
+            <Component {...pageProps} />
+            <ToastPrimitive.Viewport id="toast-viewport" />
+          </div>
+        </ToastPrimitive.Provider>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 
