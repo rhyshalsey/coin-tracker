@@ -1,23 +1,28 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface AppState {
-  selectedSymbol: string;
+  currentCoinId: string;
+  currentCurrency: string;
 }
 
 const initialState: AppState = {
-  selectedSymbol: "btc",
+  currentCoinId: "",
+  currentCurrency: "usd",
 };
 
 export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    symbolSelected: (state, action: PayloadAction<string>) => {
-      state.selectedSymbol = action.payload;
+    coinChanged: (state, action: PayloadAction<string>) => {
+      state.currentCoinId = action.payload;
+    },
+    currencyChanged: (state, action: PayloadAction<string>) => {
+      state.currentCurrency = action.payload;
     },
   },
 });
 
-export const { symbolSelected } = appSlice.actions;
+export const { coinChanged } = appSlice.actions;
 
 export default appSlice.reducer;

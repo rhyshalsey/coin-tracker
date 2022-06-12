@@ -10,12 +10,14 @@ import Fuse from "fuse.js";
 import Toast from "src/components/Toast/Toast";
 import Loader, { LoaderSizes } from "src/components/Loader/Loader";
 
+import { coinChanged } from "src/features/appSlice";
+
 import { fetcher } from "../../utils/request";
 
 import { coinGeckoKeys } from "src/constants";
+import { Cryptocurrency } from "src/types";
 
 import styles from "./Search.module.scss";
-import { symbolSelected } from "src/features/appSlice";
 
 enum actions {
   SEARCH_INPUT_BLURRED = "SEARCH_INPUT_BLURRED",
@@ -25,20 +27,6 @@ enum actions {
   TOAST_OPEN_CHANGED = "TOAST_OPEN_CHANGED",
   ERROR_GETTING_DATA = "ERROR_GETTING_DATA",
 }
-
-type Cryptocurrency = Readonly<{
-  id: string;
-  // coin_id: number;
-  // small: string;
-  large: string;
-  market_cap_rank: number;
-  name: string;
-  // price_btc: number;
-  // score: number;
-  // slug: string;
-  symbol: string;
-  thumb: string;
-}>;
 
 type State = Readonly<{
   searchFocussed: boolean;
@@ -170,7 +158,7 @@ export default function Search() {
             type: actions.SEARCH_OPTION_SELECTED,
             payload: coinData,
           });
-          dispatch(symbolSelected(coinData.symbol));
+          dispatch(coinChanged(coinData.id));
         }}
       >
         <Combobox.Button as="div" className={styles.searchInputContainer}>
@@ -184,6 +172,7 @@ export default function Search() {
           <Combobox.Input
             className={styles.searchInput}
             placeholder="Search..."
+            autoComplete="off"
             displayValue={(coinData: Cryptocurrency) =>
               coinData ? coinData.name : searchValue
             }

@@ -14,10 +14,6 @@ $list-item-icon-size: 24px;
   max-width: $search-max-width;
   position: relative;
 
-  &.focussed .searchInputContainer .searchIconWrapper svg path {
-    // fill: $search-focussed-color;
-  }
-
   &.error .searchInputContainer .searchInput {
     outline-color: colors.$red-8;
   }
@@ -66,15 +62,12 @@ $list-item-icon-size: 24px;
 
       &:focus {
         outline-color: $search-focussed-color;
-
-        &::placeholder {
-          // color: $search-focussed-color;
-        }
       }
     }
   }
 
   .searchOptionsContainer {
+    position: absolute;
     width: 100%;
     max-width: $search-max-width;
     margin-top: 8px;
