@@ -12,6 +12,7 @@ body {
 #app-wrapper,
 .page {
   height: 100%;
+  box-sizing: border-box;
 }
 
 h1,
@@ -26,21 +27,27 @@ h6 {
 
 h1 {
   font-size: fonts.$h1-font-size;
+  color: colors.$title-color;
 }
 h2 {
   font-size: fonts.$h2-font-size;
+  color: colors.$title-color;
 }
 h3 {
   font-size: fonts.$h3-font-size;
+  color: colors.$title-color;
 }
 h4 {
   font-size: fonts.$h4-font-size;
+  color: colors.$subtitle-color;
 }
 h5 {
   font-size: fonts.$h5-font-size;
+  color: colors.$subtitle-color;
 }
 h6 {
   font-size: fonts.$h6-font-size;
+  color: colors.$subtitle-color;
 }
 
 p,
@@ -60,6 +67,14 @@ input {
     border: none;
     outline: none;
   }
+}
+
+p {
+  color: colors.$body-text-color;
+}
+
+a {
+  color: colors.$link-color;
 }
 
 #toast-viewport {
