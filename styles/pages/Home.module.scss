@@ -4,18 +4,16 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+  gap: 40px;
 
   #welcomeMessage {
     display: flex;
     flex-direction: column;
+    margin-top: -40px; // Compensate for #homeContainer gap
     width: 100%;
     flex: 1;
     align-items: center;
     justify-content: center;
     text-align: center;
-
-    h1 {
-      text-align: center;
-    }
   }
 }

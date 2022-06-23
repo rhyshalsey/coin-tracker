@@ -10,6 +10,9 @@ $large-input-padding: 16px 24px;
 
 $list-item-padding: 8px 12px;
 
+/**** Z-index ****/
+$dropdown-z-index: 200;
+
 /**** Transitions ****/
 @function input-transition($property) {
   @return transition(0.25s, $property);

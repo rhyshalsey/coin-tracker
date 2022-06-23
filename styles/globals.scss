@@ -6,6 +6,7 @@ body {
   font-family: fonts.$open-sans;
   background: colors.$gray-gradient-870-850;
   height: 100%;
+  color: colors.$neutral-1;
 }
 
 #__next,
@@ -23,31 +24,36 @@ h5,
 h6 {
   font-family: fonts.$nunito;
   font-weight: fonts.$bold;
+
+  &.subtitle,
+  .neutral {
+    color: colors.$subtitle-color;
+  }
 }
 
 h1 {
   font-size: fonts.$h1-font-size;
-  color: colors.$title-color;
+  color: colors.$header-color;
 }
 h2 {
   font-size: fonts.$h2-font-size;
-  color: colors.$title-color;
+  color: colors.$header-color;
 }
 h3 {
   font-size: fonts.$h3-font-size;
-  color: colors.$title-color;
+  color: colors.$header-color;
 }
 h4 {
   font-size: fonts.$h4-font-size;
-  color: colors.$subtitle-color;
+  color: colors.$header-color;
 }
 h5 {
   font-size: fonts.$h5-font-size;
-  color: colors.$subtitle-color;
+  color: colors.$header-color;
 }
 h6 {
   font-size: fonts.$h6-font-size;
-  color: colors.$subtitle-color;
+  color: colors.$header-color;
 }
 
 p,
@@ -66,6 +72,14 @@ input {
   &:visited {
     border: none;
     outline: none;
+  }
+}
+
+p,
+a,
+span {
+  &.neutral {
+    color: colors.$neutral-11;
   }
 }
 

@@ -1,7 +1,11 @@
 .summary {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
 
   > div {
     display: flex;
+    align-items: center;
+    gap: 12px;
   }
 }

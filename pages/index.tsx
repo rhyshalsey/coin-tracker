@@ -13,6 +13,7 @@ import styles from "styles/pages/Home.module.scss";
 
 const Home: NextPage = () => {
   const { coin: coinData, isLoading: coinDataLoading } = useCurrentCoinData();
+  console.log(coinData);
 
   const currency = useSelector((state: RootState) => state.app.currentCurrency);
 
@@ -27,7 +28,8 @@ const Home: NextPage = () => {
       {coinData && (
         <div>
           <SymbolSummary
-            symbol="btc"
+            icon={coinData?.image.small}
+            symbol={coinData?.symbol}
             currency={currency}
             marketCap={coinData?.market_data?.market_cap[currency]}
           />
@@ -36,7 +38,9 @@ const Home: NextPage = () => {
       {!coinData && (
         <div id={styles.welcomeMessage}>
           <h1>Select a cryptocurrency to begin</h1>
-          <h4>Use the search bar at the top to find a cryptocurrency</h4>
+          <h4 className="subtitle">
+            Use the search bar at the top to find a cryptocurrency
+          </h4>
         </div>
       )}
     </div>
