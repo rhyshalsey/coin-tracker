@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { useSelector } from "react-redux";
 import Head from "next/head";
 
-import Search from "@/components/Search/Search";
+import Search from "@/components/ui/Search/Search";
 import SymbolSummary from "@/components/currency/SymbolSummary/SymbolSummary";
 
 import { RootState } from "src/utils/store";

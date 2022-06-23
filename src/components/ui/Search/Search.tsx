@@ -7,12 +7,12 @@ import classnames from "classnames";
 import { useQuery } from "react-query";
 import Fuse from "fuse.js";
 
-import Toast from "src/components/Toast/Toast";
-import Loader, { LoaderSizes } from "src/components/Loader/Loader";
+import Toast from "@/components/ui/base/Toast/Toast";
+import Loader, { LoaderSizes } from "@/components/ui/base/Loader/Loader";
 
 import { coinChanged } from "src/features/appSlice";
 
-import { fetcher } from "../../utils/request";
+import { fetcher } from "../../../utils/request";
 
 import { coinGeckoKeys } from "src/constants";
 import { Cryptocurrency } from "src/types";
