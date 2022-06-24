@@ -1,3 +1,6 @@
+import Skeleton, {
+  SkeletonVariants,
+} from "@/components/ui/base/Skeleton/Skeleton";
 import Image from "next/image";
 
 import styles from "./SymbolSummary.module.scss";
@@ -8,6 +11,7 @@ type propTypes = {
   symbol: string;
   currency: string;
   marketCap?: number;
+  isLoading?: boolean;
 };
 
 export default function SymbolSummary({
@@ -16,6 +20,7 @@ export default function SymbolSummary({
   symbol,
   currency,
   marketCap,
+  isLoading = false,
 }: propTypes) {
   const formattedMarketCap = marketCap
     ? new Intl.NumberFormat("en-US", {
@@ -28,16 +33,29 @@ export default function SymbolSummary({
   return (
     <div className={styles.summary}>
       <div>
-        {icon && (
-          <Image src={icon} alt={name || symbol} width="30" height="30" />
+        {isLoading ? (
+          <>
+            <Skeleton variant={SkeletonVariants.circle} />
+            <Skeleton variant={SkeletonVariants.h3} width={150} />
+          </>
+        ) : (
+          <>
+            {icon && (
+              <Image src={icon} alt={name || symbol} width="30" height="30" />
+            )}
+            <h3>{`${symbol} / ${currency}`.toUpperCase()}</h3>
+          </>
         )}
-        <h3>{`${symbol} / ${currency}`.toUpperCase()}</h3>
       </div>
-      {marketCap && (
-        <div>
-          <span className="neutral">Market cap:&nbsp;</span>
-          <h4>{formattedMarketCap}</h4>
-        </div>
+      {isLoading ? (
+        <Skeleton variant={SkeletonVariants.h4} />
+      ) : (
+        marketCap && (
+          <div>
+            <span className="neutral">Market cap:&nbsp;</span>
+            <h4>{formattedMarketCap}</h4>
+          </div>
+        )
       )}
     </div>
   );
