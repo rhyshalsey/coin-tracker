@@ -1,0 +1,55 @@
+@use "styles/variables/general";
+@use "styles/variables/fonts";
+@use "styles/variables/colors";
+
+.skeleton {
+  border-radius: general.$round-corners;
+  animation: 0.8s pulse 0s infinite alternate;
+  height: 30px;
+  width: 250px;
+  max-width: 100%;
+
+  // Not using a dynamic loop here because limitations in SCSS made it unecessarily convoluted
+  &.h1 {
+    height: fonts.$h1-font-size;
+  }
+  &.h2 {
+    height: fonts.$h2-font-size;
+  }
+  &.h3 {
+    height: fonts.$h3-font-size;
+  }
+  &.h4 {
+    height: fonts.$h4-font-size;
+  }
+  &.h5 {
+    height: fonts.$h5-font-size;
+  }
+  &.h6 {
+    height: fonts.$h6-font-size;
+  }
+  &.smallText {
+    height: fonts.$small-body-font-size;
+  }
+  &.text {
+    height: fonts.$body-font-size;
+  }
+  &.largeText {
+    height: fonts.$large-body-font-size;
+  }
+  &.circle {
+    width: 30px;
+  }
+  &.rectangle {
+    height: 300px;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    background: colors.$neutral-9;
+  }
+  100% {
+    background: colors.$neutral-6;
+  }
+}

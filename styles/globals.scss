@@ -26,7 +26,7 @@ h6 {
   font-weight: fonts.$bold;
 
   &.subtitle,
-  .neutral {
+  &.neutral {
     color: colors.$subtitle-color;
   }
 }

@@ -69,6 +69,7 @@ $list-item-icon-size: 24px;
   .searchOptionsContainer {
     position: absolute;
     z-index: general.$dropdown-z-index;
+    
     width: 100%;
     max-width: $search-max-width;
     margin-top: 8px;
