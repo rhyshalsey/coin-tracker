@@ -4,6 +4,7 @@ import Head from "next/head";
 
 import Search from "@/components/ui/Search/Search";
 import SymbolSummary from "@/components/currency/SymbolSummary/SymbolSummary";
+import PriceAction from "@/components/currency/PriceAction/PriceAction";
 
 import { RootState } from "src/utils/store";
 
@@ -13,6 +14,7 @@ import styles from "styles/pages/Home.module.scss";
 
 const Home: NextPage = () => {
   const { coin: coinData, isLoading: coinDataLoading } = useCurrentCoinData();
+  console.log(coinData);
 
   const currency = useSelector((state: RootState) => state.app.currentCurrency);
 
@@ -25,12 +27,22 @@ const Home: NextPage = () => {
       </Head>
       <Search />
       {(coinData || coinDataLoading) && (
-        <div>
+        <div id={styles.priceInfoContainer}>
           <SymbolSummary
             icon={coinData?.image.small}
             symbol={coinData?.symbol}
             currency={currency}
             marketCap={coinData?.market_data?.market_cap[currency]}
+            isLoading={coinDataLoading}
+          />
+          <PriceAction
+            price={coinData?.market_data?.current_price[currency]}
+            percentage={
+              coinData?.market_data?.price_change_percentage_24h_in_currency[
+                currency
+              ]
+            }
+            currency={currency}
             isLoading={coinDataLoading}
           />
         </div>

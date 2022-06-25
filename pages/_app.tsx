@@ -10,6 +10,8 @@ import "normalize.css/normalize.css";
 
 import "@radix-ui/colors/red.css";
 import "@radix-ui/colors/redDark.css";
+import "@radix-ui/colors/green.css";
+import "@radix-ui/colors/greenDark.css";
 import "@radix-ui/colors/teal.css";
 import "@radix-ui/colors/tealDark.css";
 import "@radix-ui/colors/mint.css";

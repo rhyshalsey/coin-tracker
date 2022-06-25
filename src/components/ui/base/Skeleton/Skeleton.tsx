@@ -14,6 +14,7 @@ export enum SkeletonVariants {
   largeText,
   circle,
   rectangle,
+  chip,
 }
 
 const classes = {
@@ -28,6 +29,7 @@ const classes = {
   [SkeletonVariants.largeText]: styles.largeText,
   [SkeletonVariants.circle]: styles.circle,
   [SkeletonVariants.rectangle]: styles.rectangle,
+  [SkeletonVariants.chip]: styles.chip,
 };
 
 type propTypes = {

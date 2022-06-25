@@ -1,0 +1,27 @@
+@use "styles/variables/colors";
+@use "styles/variables/fonts";
+
+.priceAction {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  .chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px 0 20px;
+    background-color: colors.$neutral-9;
+    height: fonts.$h1-font-size;
+    border-radius: fonts.$h1-font-size;
+    gap: 8px;
+
+    &.up {
+      background-color: colors.$green-9;
+    }
+
+    &.down {
+      background-color: colors.$red-9;
+    }
+  }
+}

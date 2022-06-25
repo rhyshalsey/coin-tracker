@@ -16,4 +16,10 @@
     justify-content: center;
     text-align: center;
   }
+
+  #priceInfoContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }

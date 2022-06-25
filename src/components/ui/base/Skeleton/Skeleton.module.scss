@@ -44,6 +44,10 @@
   &.rectangle {
     height: 300px;
   }
+  &.chip {
+    height: fonts.$h1-font-size;
+    border-radius: 25px;
+  }
 }
 
 @keyframes pulse {
