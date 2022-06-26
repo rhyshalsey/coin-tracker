@@ -1,5 +1,5 @@
 import Skeleton, {
-  SkeletonVariants,
+  SkeletonLoaderVariants,
 } from "@/components/ui/base/Skeleton/Skeleton";
 import Image from "next/image";
 
@@ -35,8 +35,8 @@ export default function SymbolSummary({
       <div>
         {isLoading ? (
           <>
-            <Skeleton variant={SkeletonVariants.circle} />
-            <Skeleton variant={SkeletonVariants.h3} width={150} />
+            <Skeleton variant={SkeletonLoaderVariants.circle} />
+            <Skeleton variant={SkeletonLoaderVariants.h3} width={150} />
           </>
         ) : (
           <>
@@ -48,7 +48,7 @@ export default function SymbolSummary({
         )}
       </div>
       {isLoading ? (
-        <Skeleton variant={SkeletonVariants.h4} />
+        <Skeleton variant={SkeletonLoaderVariants.h4} />
       ) : (
         marketCap && (
           <div>

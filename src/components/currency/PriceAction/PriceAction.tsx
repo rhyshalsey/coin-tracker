@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { IoCaretDown, IoCaretUp, IoRemove } from "react-icons/io5";
 
 import Skeleton, {
-  SkeletonVariants,
+  SkeletonLoaderVariants,
 } from "@/components/ui/base/Skeleton/Skeleton";
 
 import styles from "./PriceAction.module.scss";
@@ -36,8 +36,8 @@ const PriceAction = ({
     <div className={styles.priceAction}>
       {isLoading ? (
         <>
-          <Skeleton variant={SkeletonVariants.h1} />
-          <Skeleton variant={SkeletonVariants.chip} width={100} />
+          <Skeleton variant={SkeletonLoaderVariants.h1} />
+          <Skeleton variant={SkeletonLoaderVariants.chip} width={100} />
         </>
       ) : (
         <>

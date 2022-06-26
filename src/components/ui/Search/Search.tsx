@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useReducer } from "react";
 import { useDispatch } from "react-redux";
-import Image from "next/image";
 import { Combobox } from "@headlessui/react";
 import { IoSearchSharp } from "react-icons/io5";
 import classnames from "classnames";
@@ -9,6 +8,8 @@ import Fuse from "fuse.js";
 
 import Toast from "@/components/ui/base/Toast/Toast";
 import Loader, { LoaderSizes } from "@/components/ui/base/Loader/Loader";
+import Image from "@/components/ui/base/Image/Image";
+import { SkeletonLoaderVariants } from "@/components/ui/base/Skeleton/Skeleton";
 
 import { coinChanged } from "src/features/appSlice";
 
@@ -208,6 +209,7 @@ export default function Search() {
                             alt={item.name}
                             width={styles.listItemIconSize}
                             height={styles.listItemIconSize}
+                            loaderShape={SkeletonLoaderVariants.circle}
                           />
                         </div>
                         <span className={styles.coinName}>{item.name}</span>
