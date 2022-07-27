@@ -41,3 +41,39 @@ Tests run with `Jest` and the following libraries:
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## SCSS
+
+### Responsiveness
+
+In order to get a responsive breakpoint, we can use the responsive mixin (`mixins/_responsive.scss`) which allows us to specify a breakpoint size and an optional media query type.
+
+The possible breakpoints are
+
+```scss
+xsmall: 0,
+small: 576px,
+medium: 768px,
+large: 992px,
+xlarge: 1200px,
+xxlarge: 1400px,
+```
+
+Example usage:
+
+```scss
+@use "styles/mixins/responsive";
+
+#element {
+  @include responsive.breakpoint-down(small) {
+    font-size: 12px;
+  }
+}
+
+// Generates the following
+@media screen and (max-width: 576px) {
+  #element {
+    font-size: 12px;
+  }
+}
+```
