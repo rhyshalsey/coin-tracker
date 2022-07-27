@@ -1,0 +1,23 @@
+@use "sass:map";
+
+/**** Breakpoints ****/
+$breakpoints: (
+  "xsmall": 0,
+  "small": 576px,
+  "medium": 768px,
+  "large": 992px,
+  "xlarge": 1200px,
+  "xxlarge": 1400px,
+);
+
+@mixin breakpoint-down($breakpoint, $type: screen) {
+  $hasKey: map.has-key($breakpoints, $breakpoint);
+
+  @if not $hasKey {
+    @error "Breakpoint `#{$breakpoint}` is not a valid breakpoint";
+  }
+
+  @media #{$type} and (max-width: map.get($breakpoints, $breakpoint)) {
+    @content;
+  }
+}

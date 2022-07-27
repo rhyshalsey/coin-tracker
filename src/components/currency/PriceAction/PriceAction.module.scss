@@ -1,10 +1,17 @@
 @use "styles/variables/colors";
 @use "styles/variables/fonts";
 
+@use "styles/mixins/responsive";
+
 .priceAction {
   display: flex;
   gap: 12px;
   align-items: center;
+
+  @include responsive.breakpoint-down(small) {
+    justify-content: space-between;
+    width: 100%;
+  }
 
   .chip {
     display: flex;

@@ -1,12 +1,19 @@
 @use "variables/colors";
 @use "variables/fonts";
 
+@use "mixins/responsive";
+
 html,
 body {
+  font-size: fonts.$base-font-size;
   font-family: fonts.$open-sans;
   background: colors.$gray-gradient-870-850;
   height: 100%;
   color: colors.$neutral-1;
+
+  @include responsive.breakpoint-down(small) {
+    font-size: fonts.$base-font-size-small;
+  }
 }
 
 #__next,
@@ -61,7 +68,6 @@ a,
 li,
 button,
 input {
-  font-size: fonts.$base-font-size;
   font-family: fonts.$open-sans;
   font-weight: fonts.$regular;
   border: none;
