@@ -5,6 +5,8 @@ export const coinGeckoKeys = {
     [coinGeckoKeys.coingecko, "search", query] as const,
   getCoin: (symbol: string) =>
     [coinGeckoKeys.coingecko, "symbol", symbol] as const,
+  getCoinMarketData: (coinId: string, vsCurrency: string, days: number) =>
+    [coinGeckoKeys.coingecko, "marketData", coinId, vsCurrency, days] as const,
 };
 
 export const queryKeys = {

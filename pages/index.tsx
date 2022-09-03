@@ -11,10 +11,10 @@ import { RootState } from "src/utils/store";
 import useCurrentCoinData from "src/hooks/useCurrentCoinData";
 
 import styles from "styles/pages/Home.module.scss";
+import Chart from "@/components/chart/Chart/Chart";
 
 const Home: NextPage = () => {
   const { coin: coinData, isLoading: coinDataLoading } = useCurrentCoinData();
-  console.log(coinData);
 
   const currency = useSelector((state: RootState) => state.app.currentCurrency);
 
@@ -27,25 +27,28 @@ const Home: NextPage = () => {
       </Head>
       <Search />
       {(coinData || coinDataLoading) && (
-        <div id={styles.priceInfoContainer}>
-          <SymbolSummary
-            icon={coinData?.image.small}
-            symbol={coinData?.symbol}
-            currency={currency}
-            marketCap={coinData?.market_data?.market_cap[currency]}
-            isLoading={coinDataLoading}
-          />
-          <PriceAction
-            price={coinData?.market_data?.current_price[currency]}
-            percentage={
-              coinData?.market_data?.price_change_percentage_24h_in_currency[
-                currency
-              ]
-            }
-            currency={currency}
-            isLoading={coinDataLoading}
-          />
-        </div>
+        <>
+          <div id={styles.priceInfoContainer}>
+            <SymbolSummary
+              icon={coinData?.image.small}
+              symbol={coinData?.symbol}
+              currency={currency}
+              marketCap={coinData?.market_data?.market_cap[currency]}
+              isLoading={coinDataLoading}
+            />
+            <PriceAction
+              price={coinData?.market_data?.current_price[currency]}
+              percentage={
+                coinData?.market_data?.price_change_percentage_24h_in_currency[
+                  currency
+                ]
+              }
+              currency={currency}
+              isLoading={coinDataLoading}
+            />
+          </div>
+          <Chart />
+        </>
       )}
       {!coinData && !coinDataLoading && (
         <div id={styles.welcomeMessage}>
