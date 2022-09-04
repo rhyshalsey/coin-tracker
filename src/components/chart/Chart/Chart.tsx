@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { useSelector } from "react-redux";
+import { mint, slate } from "@radix-ui/colors";
 
 import { RootState } from "src/utils/store";
 
@@ -58,19 +59,7 @@ const Chart = () => {
 
     const chartElem = d3.select(chartRef.current);
 
-    const x = d3
-      .scaleTime()
-      .domain([
-        new Date(priceData[0][0]),
-        new Date(priceData[priceData.length - 1][0]),
-      ])
-      .range([30, windowDimensions.width]);
-
-    chartElem
-      .select<SVGSVGElement>(".xAxis")
-      .attr("transform", `translate(0, ${windowDimensions.height - 20})`)
-      .call(d3.axisBottom(x));
-
+    // Create y axis
     const yRange = d3.extent(
       priceData,
       (d: [number, number]) => d[1]
@@ -81,11 +70,63 @@ const Chart = () => {
       .domain(yRange)
       .range([windowDimensions.height - 30, 0]);
 
-    chartElem
-      .select<SVGSVGElement>(".yAxis")
-      .attr("transform", `translate(20, 0)`)
-      .call(d3.axisLeft(y));
+    const yAxisElem = chartElem.select<SVGSVGElement>(".yAxis");
+    yAxisElem.selectAll("*").remove();
+    yAxisElem.call(d3.axisLeft(y));
 
+    // Dynamically set yAxis to align to left of parent
+    const yAxisWidth = yAxisElem.node()?.getBBox().width || 60;
+    yAxisElem.attr("transform", `translate(${yAxisWidth}, 0)`);
+
+    // Draw custom yAxis lines
+    yAxisElem
+      .append("line")
+      .attr("x1", 0)
+      .attr("x2", 0)
+      .attr("y1", windowDimensions.height - 20)
+      .attr("y2", 0)
+      .attr("stroke", slate.slate11);
+
+    yAxisElem
+      .selectAll(".tick")
+      .selectAll("line")
+      .attr("x2", windowDimensions.width)
+      .attr("stroke", slate.slate11)
+      .attr("opacity", 0.35);
+
+    // Remove y axis default lines
+    yAxisElem.selectAll(".domain").remove();
+
+    // Create x axis
+    const x = d3
+      .scaleTime()
+      .domain([
+        new Date(priceData[0][0]),
+        new Date(priceData[priceData.length - 1][0]),
+      ])
+      .range([yAxisWidth, windowDimensions.width]);
+
+    const xAxisElem = chartElem.select<SVGSVGElement>(".xAxis");
+    xAxisElem.selectAll("*").remove();
+
+    xAxisElem
+      .attr("transform", `translate(0, ${windowDimensions.height - 20})`)
+      .call(d3.axisBottom(x));
+
+    // Draw custom x axis lines
+    xAxisElem
+      .append("line")
+      .attr("x1", yAxisWidth)
+      .attr("x2", windowDimensions.width)
+      .attr("y1", 0)
+      .attr("y2", 0)
+      .attr("stroke", slate.slate11);
+
+    // Remove x axis default lines
+    xAxisElem.selectAll(".tick").selectAll("line").remove();
+    xAxisElem.selectAll(".domain").remove();
+
+    // Create chart's line
     const line = d3
       .line(coinMarketData.prices)
       .x((d) => {
@@ -98,9 +139,10 @@ const Chart = () => {
     chartElem
       .select("path")
       .datum(priceData)
+      .attr("class", "chartLine")
       .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
+      .attr("stroke", mint.mint11)
+      .attr("stroke-width", 2)
       .attr("d", line);
   }, [coinMarketData, windowDimensions]);
 
@@ -110,9 +152,9 @@ const Chart = () => {
         ref={chartRef}
         viewBox={`0 0 ${windowDimensions.width} ${windowDimensions.height}`}
       >
+        <g className="yAxis" />
         <path />
         <g className="xAxis" />
-        <g className="yAxis" />
       </svg>
     </div>
   );
