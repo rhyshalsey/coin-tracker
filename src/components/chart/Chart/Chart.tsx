@@ -21,6 +21,10 @@ const Chart = () => {
     (state: RootState) => state.app.currentCoinId
   );
 
+  const currentCurrency = useSelector(
+    (state: RootState) => state.app.currentCurrency
+  );
+
   const { coinMarketData, isLoading, isError } = useCoinMarketData(
     currentCoinId,
     "usd",
@@ -72,7 +76,27 @@ const Chart = () => {
 
     const yAxisElem = chartElem.select<SVGSVGElement>(".yAxis");
     yAxisElem.selectAll("*").remove();
-    yAxisElem.call(d3.axisLeft(y));
+
+    const yAxis = d3
+      .axisLeft(y)
+      .ticks(5)
+      .tickFormat((d) => {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: currentCurrency.toUpperCase(),
+          maximumFractionDigits: 8,
+        }).format(d as number);
+      });
+
+    yAxisElem.call(yAxis);
+
+    const yAxisTicks = yAxisElem.selectAll(".tick");
+
+    // Set font styles on yAxis
+    yAxisTicks
+      .selectAll("text")
+      .style("font-size", "12px")
+      .style("fill", slate.slate9);
 
     // Dynamically set yAxis to align to left of parent
     const yAxisWidth = yAxisElem.node()?.getBBox().width || 60;
@@ -87,8 +111,7 @@ const Chart = () => {
       .attr("y2", 0)
       .attr("stroke", slate.slate11);
 
-    yAxisElem
-      .selectAll(".tick")
+    yAxisTicks
       .selectAll("line")
       .attr("x2", windowDimensions.width)
       .attr("stroke", slate.slate11)
@@ -113,6 +136,14 @@ const Chart = () => {
       .attr("transform", `translate(0, ${windowDimensions.height - 20})`)
       .call(d3.axisBottom(x));
 
+    const xAxisTicks = xAxisElem.selectAll(".tick");
+
+    // Set font styles on yAxis
+    xAxisTicks
+      .selectAll("text")
+      .style("font-size", "12px")
+      .style("fill", slate.slate9);
+
     // Draw custom x axis lines
     xAxisElem
       .append("line")
@@ -126,7 +157,7 @@ const Chart = () => {
     xAxisElem.selectAll(".tick").selectAll("line").remove();
     xAxisElem.selectAll(".domain").remove();
 
-    // Create chart's line
+    // Create chart's price line
     const line = d3
       .line(coinMarketData.prices)
       .x((d) => {
@@ -144,7 +175,7 @@ const Chart = () => {
       .attr("stroke", mint.mint11)
       .attr("stroke-width", 2)
       .attr("d", line);
-  }, [coinMarketData, windowDimensions]);
+  }, [coinMarketData, currentCurrency, windowDimensions]);
 
   return (
     <div className={styles.chartContainer}>
