@@ -204,13 +204,18 @@ export default function Search() {
                     >
                       <div>
                         <div className={styles.coinIconWrapper}>
-                          <Image
-                            src={item.thumb}
-                            alt={item.name}
-                            width={styles.listItemIconSize}
-                            height={styles.listItemIconSize}
-                            loaderShape={SkeletonLoaderVariants.circle}
-                          />
+                          {
+                            item?.thumb.includes("http") ? (
+                              <Image
+                                src={item.thumb}
+                                alt={item.name}
+                                width={styles.listItemIconSize}
+                                height={styles.listItemIconSize}
+                                loaderShape={SkeletonLoaderVariants.circle}
+                              />
+                            ) : null
+                            // <EmptyCircle (search for Hecopeg or XRP) />
+                          }
                         </div>
                         <span className={styles.coinName}>{item.name}</span>
                       </div>

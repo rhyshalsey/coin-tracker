@@ -1,10 +1,9 @@
 @use "styles/variables/general";
 @use "styles/variables/fonts";
-@use "styles/variables/colors";
 
 .skeleton {
   border-radius: general.$round-corners;
-  animation: 0.8s pulse 0s infinite alternate;
+  animation: general.pulse-animation(background);
   height: 30px;
   width: 250px;
   max-width: 100%;
@@ -47,14 +46,5 @@
   &.chip {
     height: fonts.$h1-font-size;
     border-radius: 25px;
-  }
-}
-
-@keyframes pulse {
-  0% {
-    background: colors.$neutral-9;
-  }
-  100% {
-    background: colors.$neutral-6;
   }
 }

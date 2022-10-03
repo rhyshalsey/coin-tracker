@@ -8,6 +8,7 @@ import { RootState } from "src/utils/store";
 import useCoinMarketData from "src/hooks/useCoinMarketData";
 
 import styles from "./Chart.module.scss";
+import classNames from "classnames";
 
 const Chart = () => {
   const [windowDimensions, setWindowDimensions] = useState({
@@ -40,6 +41,10 @@ const Chart = () => {
     const updateWindowDimensions = () => {
       if (windowUpdateTimeoutRef.current) {
         clearTimeout(windowUpdateTimeoutRef.current);
+      }
+
+      if (chartDrawIntervalRef.current) {
+        clearInterval(chartDrawIntervalRef.current);
       }
 
       // Because drawing the chart dynamically is intensive,
@@ -183,7 +188,7 @@ const Chart = () => {
     chartDrawIntervalRef.current = setInterval(() => {
       // Make sure we don't go past the price data length
       chartDrawIndexRef.current = Math.min(
-        chartDrawIndexRef.current + 1,
+        chartDrawIndexRef.current + 2, // Update 2 data points at a time to reduce animation/computation time
         priceData.length
       );
 
@@ -210,21 +215,19 @@ const Chart = () => {
       chartElem
         .select("path")
         .datum(currentPriceData)
-        .attr("class", "chartLine")
         .attr("fill", "none")
         .attr("stroke", mint.mint11)
         .attr("stroke-width", 2)
         .attr("d", line);
-    }, 0.5);
+    }, 20);
   }, [coinMarketData, currentCurrency, windowDimensions]);
 
   const drawLoadingChart = useCallback(() => {
     const chartElem = d3.select(chartRef.current);
 
-    const fakeData: [number, number][] = Array.from(Array(250)).map(
-      (_v, index) => [Math.random(), index]
+    const fakeData: [number, number][] = Array.from(Array(300)).map(
+      (_v, index) => [Math.random() * index + index, index]
     );
-    console.log(fakeData);
 
     // Create y axis
     const yRange = d3.extent(
@@ -242,7 +245,29 @@ const Chart = () => {
 
     // Dynamically set yAxis to align to left of parent
     const yAxisWidth = yAxisElem.node()?.getBBox().width || 60;
-    yAxisElem.attr("transform", `translate(${yAxisWidth}, 0)`);
+
+    const yAxis = d3.axisLeft(y).ticks(5);
+
+    yAxisElem.call(yAxis);
+
+    const yAxisTicks = yAxisElem.selectAll(".tick");
+    yAxisTicks.selectAll("text  ").remove();
+
+    yAxisTicks
+      .append("rect")
+      .attr("class", classNames(styles.skeleton))
+      .attr("width", "50px")
+      .attr("height", "20px")
+      .attr("rx", styles.roundCorners)
+      .attr("transform", "translate(0, -10)");
+
+    yAxisTicks
+      .selectAll("line")
+      // .attr("class", styles.skeleton)
+      .attr("x1", yAxisWidth)
+      .attr("x2", windowDimensions.width)
+      .attr("stroke", slate.slate11)
+      .attr("opacity", 0.35);
 
     // Create x axis
     const xRange = d3.extent(
@@ -255,8 +280,31 @@ const Chart = () => {
       .domain(xRange)
       .range([yAxisWidth, windowDimensions.width]);
 
+    const xAxisElem = chartElem.select<SVGSVGElement>(".xAxis");
+    xAxisElem.selectAll("*").remove();
+
+    const xAxis = d3.axisBottom(x).ticks(5);
+
+    xAxisElem
+      .attr("transform", `translate(0, ${windowDimensions.height - 20})`)
+      .call(xAxis);
+
+    xAxisElem.selectAll("path").remove();
+
+    const xAxisTicks = xAxisElem.selectAll(".tick");
+
+    xAxisTicks.selectAll("*").remove();
+
+    xAxisTicks
+      .append("rect")
+      .attr("class", classNames(styles.skeleton))
+      .attr("width", "100px")
+      .attr("height", "20px")
+      .attr("rx", styles.roundCorners)
+      .attr("transform", "translate(0, 0)");
+
     const line = d3
-      .line(fakeData)
+      .line(fakeData as any)
       .x((d) => {
         return x(d[1]);
       })
@@ -267,16 +315,16 @@ const Chart = () => {
     chartElem
       .select("path")
       .datum(fakeData)
-      .attr("class", "chartLine")
+      .attr("class", classNames(styles.chartLine, styles.skeleton))
       .attr("fill", "none")
-      .attr("stroke", mint.mint11)
+      .attr("stroke", slate.slate11)
       .attr("stroke-width", 2)
       .attr("d", line);
   }, [windowDimensions]);
 
   // Chart is drawn in this useEffect
   useEffect(() => {
-    if (isLoading) {
+    if (!isLoading) {
       drawLoadingChart();
     } else {
       drawChart();

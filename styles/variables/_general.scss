@@ -1,3 +1,5 @@
+@use "styles/variables/colors";
+
 /**** Spacing ****/
 $viewport-horizontal-padding: 20px;
 
@@ -13,11 +15,49 @@ $list-item-padding: 8px 12px;
 /**** Z-index ****/
 $dropdown-z-index: 200;
 
+/**** Animations ****/
+// $pulse-animation: 0.8s pulse 0s infinite alternate;
+
+/**** Keyframes ****/
+@keyframes pulse {
+  0% {
+    background: colors.$neutral-9;
+    fill: colors.$neutral-9;
+    stroke: colors.$neutral-9;
+  }
+  100% {
+    background: colors.$neutral-6;
+    fill: colors.$neutral-6;
+    stroke: colors.$neutral-6;
+  }
+}
+
 /**** Transitions ****/
+@mixin pulse($property) {
+  @keyframes pulse-#{$property} {
+    0% {
+      #{$property}: colors.$neutral-9;
+    }
+    100% {
+      #{$property}: colors.$neutral-6;
+    }
+  }
+}
+
+// Generates animation keyframes for skeleton loading
+@include pulse(background);
+@include pulse(fill);
+@include pulse(stroke);
+
+@function pulse-animation($property, $delay: 0s) {
+  @return 0.8s pulse-#{$property} $delay infinite alternate;
+}
+
 @function input-transition($property) {
   @return transition(0.25s, $property);
 }
 
+// Generates a CSS transition string
 @function transition($time, $property, $easing: ease-in-out) {
   @return $time $property $easing;
 }
