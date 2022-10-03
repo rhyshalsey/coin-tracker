@@ -213,8 +213,9 @@ const Chart = () => {
         });
 
       chartElem
-        .select("path")
+        .select("#chartLine")
         .datum(currentPriceData)
+        .attr("class", "")
         .attr("fill", "none")
         .attr("stroke", mint.mint11)
         .attr("stroke-width", 2)
@@ -263,11 +264,13 @@ const Chart = () => {
 
     yAxisTicks
       .selectAll("line")
-      // .attr("class", styles.skeleton)
       .attr("x1", yAxisWidth)
       .attr("x2", windowDimensions.width)
       .attr("stroke", slate.slate11)
       .attr("opacity", 0.35);
+
+    // Remove y axis default lines
+    yAxisElem.selectAll(".domain").remove();
 
     // Create x axis
     const xRange = d3.extent(
@@ -301,7 +304,7 @@ const Chart = () => {
       .attr("width", "100px")
       .attr("height", "20px")
       .attr("rx", styles.roundCorners)
-      .attr("transform", "translate(0, 0)");
+      .attr("transform", "translate(0, 5)");
 
     const line = d3
       .line(fakeData as any)
@@ -313,7 +316,7 @@ const Chart = () => {
       });
 
     chartElem
-      .select("path")
+      .select("#chartLine")
       .datum(fakeData)
       .attr("class", classNames(styles.chartLine, styles.skeleton))
       .attr("fill", "none")
@@ -324,7 +327,7 @@ const Chart = () => {
 
   // Chart is drawn in this useEffect
   useEffect(() => {
-    if (!isLoading) {
+    if (isLoading) {
       drawLoadingChart();
     } else {
       drawChart();
@@ -338,7 +341,7 @@ const Chart = () => {
         viewBox={`0 0 ${windowDimensions.width} ${windowDimensions.height}`}
       >
         <g className="yAxis" />
-        <path />
+        <path id="chartLine" />
         <g className="xAxis" />
       </svg>
     </div>
