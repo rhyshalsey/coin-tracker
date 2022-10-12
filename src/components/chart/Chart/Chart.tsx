@@ -1,25 +1,24 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { useSelector } from "react-redux";
 import { mint, slate } from "@radix-ui/colors";
+import classNames from "classnames";
 
 import { RootState } from "src/utils/store";
 
 import useCoinMarketData from "src/hooks/useCoinMarketData";
 
 import styles from "./Chart.module.scss";
-import classNames from "classnames";
 
-const Chart = () => {
-  const [windowDimensions, setWindowDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
+type ChartProps = {
+  chartWidth: number;
+  chartHeight: number;
+};
 
-  const windowUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
-
+const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
   const chartRef = useRef(null);
 
+  // Refs for animating chart line drawing
   const chartDrawIndexRef = useRef(0);
   const chartDrawIntervalRef = useRef<ReturnType<typeof setInterval>>();
 
@@ -38,31 +37,18 @@ const Chart = () => {
   );
 
   useEffect(() => {
-    const updateWindowDimensions = () => {
-      if (windowUpdateTimeoutRef.current) {
-        clearTimeout(windowUpdateTimeoutRef.current);
-      }
-
+    const windowResized = () => {
       if (chartDrawIntervalRef.current) {
         clearInterval(chartDrawIntervalRef.current);
       }
-
-      // Because drawing the chart dynamically is intensive,
-      // only update the window dimensions after a short delay
-      windowUpdateTimeoutRef.current = setTimeout(() => {
-        setWindowDimensions({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      }, 500);
     };
 
-    window.addEventListener("resize", updateWindowDimensions);
+    window.addEventListener("resize", windowResized);
 
-    updateWindowDimensions();
+    // windowResized();
 
     return () => {
-      window.removeEventListener("resize", updateWindowDimensions);
+      window.removeEventListener("resize", windowResized);
     };
   }, []);
 
@@ -88,7 +74,7 @@ const Chart = () => {
     const y = d3
       .scaleLinear()
       .domain(yRange)
-      .range([windowDimensions.height - 30, 0]);
+      .range([chartHeight - 30, 0]);
 
     const yAxisElem = chartElem.select<SVGSVGElement>(".yAxis");
     yAxisElem.selectAll("*").remove();
@@ -123,13 +109,13 @@ const Chart = () => {
       .append("line")
       .attr("x1", 0)
       .attr("x2", 0)
-      .attr("y1", windowDimensions.height - 20)
+      .attr("y1", chartHeight - 20)
       .attr("y2", 0)
       .attr("stroke", slate.slate11);
 
     yAxisTicks
       .selectAll("line")
-      .attr("x2", windowDimensions.width)
+      .attr("x2", chartWidth)
       .attr("stroke", slate.slate11)
       .attr("opacity", 0.35);
 
@@ -143,7 +129,7 @@ const Chart = () => {
         new Date(priceData[0][0]),
         new Date(priceData[priceData.length - 1][0]),
       ])
-      .range([yAxisWidth, windowDimensions.width]);
+      .range([yAxisWidth, chartWidth]);
 
     const xAxisElem = chartElem.select<SVGSVGElement>(".xAxis");
     xAxisElem.selectAll("*").remove();
@@ -154,7 +140,7 @@ const Chart = () => {
       .tickFormat((d) => d3.timeFormat("%d %a")(d as Date));
 
     xAxisElem
-      .attr("transform", `translate(0, ${windowDimensions.height - 20})`)
+      .attr("transform", `translate(0, ${chartHeight - 20})`)
       .call(xAxis);
 
     const xAxisTicks = xAxisElem.selectAll(".tick");
@@ -169,7 +155,7 @@ const Chart = () => {
     xAxisElem
       .append("line")
       .attr("x1", yAxisWidth)
-      .attr("x2", windowDimensions.width)
+      .attr("x2", chartWidth)
       .attr("y1", 0)
       .attr("y2", 0)
       .attr("stroke", slate.slate11);
@@ -221,7 +207,7 @@ const Chart = () => {
         .attr("stroke-width", 2)
         .attr("d", line);
     }, 20);
-  }, [coinMarketData, currentCurrency, windowDimensions]);
+  }, [coinMarketData?.prices, currentCurrency, chartHeight, chartWidth]);
 
   const drawLoadingChart = useCallback(() => {
     const chartElem = d3.select(chartRef.current);
@@ -239,7 +225,7 @@ const Chart = () => {
     const y = d3
       .scaleLinear()
       .domain(yRange)
-      .range([windowDimensions.height - 30, 0]);
+      .range([chartHeight - 30, 0]);
 
     const yAxisElem = chartElem.select<SVGSVGElement>(".yAxis");
     yAxisElem.selectAll("*").remove();
@@ -265,7 +251,7 @@ const Chart = () => {
     yAxisTicks
       .selectAll("line")
       .attr("x1", yAxisWidth)
-      .attr("x2", windowDimensions.width)
+      .attr("x2", chartWidth)
       .attr("stroke", slate.slate11)
       .attr("opacity", 0.35);
 
@@ -278,10 +264,7 @@ const Chart = () => {
       (d: [number, number]) => d[1]
     ) as number[];
 
-    const x = d3
-      .scaleLinear()
-      .domain(xRange)
-      .range([yAxisWidth, windowDimensions.width]);
+    const x = d3.scaleLinear().domain(xRange).range([yAxisWidth, chartWidth]);
 
     const xAxisElem = chartElem.select<SVGSVGElement>(".xAxis");
     xAxisElem.selectAll("*").remove();
@@ -289,7 +272,7 @@ const Chart = () => {
     const xAxis = d3.axisBottom(x).ticks(5);
 
     xAxisElem
-      .attr("transform", `translate(0, ${windowDimensions.height - 20})`)
+      .attr("transform", `translate(0, ${chartHeight - 20})`)
       .call(xAxis);
 
     xAxisElem.selectAll("path").remove();
@@ -323,7 +306,7 @@ const Chart = () => {
       .attr("stroke", slate.slate11)
       .attr("stroke-width", 2)
       .attr("d", line);
-  }, [windowDimensions]);
+  }, [chartHeight, chartWidth]);
 
   // Chart is drawn in this useEffect
   useEffect(() => {
@@ -336,10 +319,7 @@ const Chart = () => {
 
   return (
     <div className={styles.chartContainer}>
-      <svg
-        ref={chartRef}
-        viewBox={`0 0 ${windowDimensions.width} ${windowDimensions.height}`}
-      >
+      <svg ref={chartRef} viewBox={`0 0 ${chartWidth} ${chartHeight}`}>
         <g className="yAxis" />
         <path id="chartLine" />
         <g className="xAxis" />

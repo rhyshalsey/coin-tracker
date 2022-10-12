@@ -1,22 +1,64 @@
+import { useEffect, useRef } from "react";
 import type { NextPage } from "next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
 
 import Search from "@/components/ui/Search/Search";
 import SymbolSummary from "@/components/currency/SymbolSummary/SymbolSummary";
 import PriceAction from "@/components/currency/PriceAction/PriceAction";
+import Chart from "@/components/chart/Chart/Chart";
 
 import { RootState } from "src/utils/store";
 
 import useCurrentCoinData from "src/hooks/useCurrentCoinData";
 
 import styles from "styles/pages/Home.module.scss";
-import Chart from "@/components/chart/Chart/Chart";
+import { windowResized } from "src/features/appSlice";
 
 const Home: NextPage = () => {
+  const dispatch = useDispatch();
+
+  const windowUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
   const { coin: coinData, isLoading: coinDataLoading } = useCurrentCoinData();
 
   const currency = useSelector((state: RootState) => state.app.currentCurrency);
+
+  const { windowWidth, windowHeight } = useSelector((state: RootState) => ({
+    windowHeight: state.app.windowHeight,
+    windowWidth: state.app.windowWidth,
+  }));
+
+  useEffect(() => {
+    const updateWindowDimensions = () => {
+      if (!window) {
+        return;
+      }
+
+      if (windowUpdateTimeoutRef.current) {
+        clearTimeout(windowUpdateTimeoutRef.current);
+      }
+
+      // Because drawing the chart dynamically is intensive,
+      // only update the window dimensions after a short delay
+      windowUpdateTimeoutRef.current = setTimeout(() => {
+        dispatch(
+          windowResized({
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight,
+          })
+        );
+      }, 1000);
+    };
+
+    window.addEventListener("resize", updateWindowDimensions);
+
+    updateWindowDimensions();
+
+    return () => {
+      window.removeEventListener("resize", updateWindowDimensions);
+    };
+  }, [dispatch]);
 
   return (
     <div id={styles.homeContainer} className="page">
@@ -47,7 +89,7 @@ const Home: NextPage = () => {
               isLoading={coinDataLoading}
             />
           </div>
-          <Chart />
+          <Chart chartWidth={windowWidth} chartHeight={windowHeight} />
         </>
       )}
       {!coinData && !coinDataLoading && (
