@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { NextPage } from "next";
 import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
@@ -16,11 +16,13 @@ import styles from "styles/pages/Home.module.scss";
 import { windowResized } from "src/features/appSlice";
 
 const Home: NextPage = () => {
-  const dispatch = useDispatch();
+  const chartInfoContainerRef = useRef<HTMLDivElement>(null);
 
   const windowUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   const { coin: coinData, isLoading: coinDataLoading } = useCurrentCoinData();
+
+  const dispatch = useDispatch();
 
   const currency = useSelector((state: RootState) => state.app.currentCurrency);
 
@@ -60,6 +62,21 @@ const Home: NextPage = () => {
     };
   }, [dispatch]);
 
+  const calculateChartHeight = useCallback(() => {
+    if (!windowHeight) {
+      return 0;
+    }
+
+    if (!chartInfoContainerRef.current) {
+      return windowHeight;
+    }
+
+    const contentHeight =
+      windowHeight - chartInfoContainerRef.current.offsetHeight;
+
+    return Math.max(500, Math.min(contentHeight, 800));
+  }, [windowHeight]);
+
   return (
     <div id={styles.homeContainer} className="page">
       <Head>
@@ -70,7 +87,7 @@ const Home: NextPage = () => {
       <Search />
       {(coinData || coinDataLoading) && (
         <>
-          <div id={styles.priceInfoContainer}>
+          <div id={styles.priceInfoContainer} ref={chartInfoContainerRef}>
             <SymbolSummary
               icon={coinData?.image.small}
               symbol={coinData?.symbol}
@@ -89,7 +106,10 @@ const Home: NextPage = () => {
               isLoading={coinDataLoading}
             />
           </div>
-          <Chart chartWidth={windowWidth} chartHeight={windowHeight} />
+          <Chart
+            chartWidth={windowWidth}
+            chartHeight={calculateChartHeight()}
+          />
         </>
       )}
       {!coinData && !coinDataLoading && (
