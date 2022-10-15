@@ -6,9 +6,10 @@ The app is deployed on Vercel and can be viewed at the following url: https://co
 
 ## Running the application
 
-In otder to start the app, you can use:
+In order to start the app, you can use:
 
 ```bash
+npm i
 npm run dev
 ```
 
