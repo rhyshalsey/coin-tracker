@@ -10,6 +10,8 @@ import useCoinMarketData from "src/hooks/useCoinMarketData";
 
 import styles from "./Chart.module.scss";
 
+const CHART_TIMESPAN_DAYS = 1;
+
 type ChartProps = {
   chartWidth: number;
   chartHeight: number;
@@ -33,7 +35,7 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
   const { coinMarketData, isLoading, isError } = useCoinMarketData(
     currentCoinId,
     "usd",
-    14
+    CHART_TIMESPAN_DAYS
   );
 
   useEffect(() => {
@@ -45,12 +47,21 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
 
     window.addEventListener("resize", windowResized);
 
-    // windowResized();
-
     return () => {
       window.removeEventListener("resize", windowResized);
     };
   }, []);
+
+  const getXAxisTickFormat = (date: Date) => {
+    if (CHART_TIMESPAN_DAYS <= 1) {
+      return d3.timeFormat("%H:%M")(date);
+    } else if (CHART_TIMESPAN_DAYS > 1 && CHART_TIMESPAN_DAYS <= 90) {
+      return d3.timeFormat("%d %a")(date);
+    } else if (CHART_TIMESPAN_DAYS > 90) {
+      return d3.timeFormat("%x %d")(date);
+    }
+    return d3.timeFormat("%x")(date);
+  };
 
   const drawChart = useCallback(() => {
     if (
@@ -64,6 +75,8 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
     const priceData: [number, number][] = coinMarketData.prices;
 
     const chartElem = d3.select(chartRef.current);
+
+    const showYAxis = chartWidth > 768;
 
     // Create y axis
     const yRange = d3.extent(
@@ -94,24 +107,28 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
 
     const yAxisTicks = yAxisElem.selectAll(".tick");
 
-    // Set font styles on yAxis
-    yAxisTicks
-      .selectAll("text")
-      .style("font-size", "12px")
-      .style("fill", slate.slate9);
+    const yAxisTickText = yAxisTicks.selectAll("text");
+    if (showYAxis) {
+      // Set font styles on yAxis
+      yAxisTickText.style("font-size", "12px").style("fill", slate.slate9);
+    } else {
+      yAxisTickText.remove();
+    }
 
     // Dynamically set yAxis to align to left of parent
     const yAxisWidth = yAxisElem.node()?.getBBox().width || 60;
     yAxisElem.attr("transform", `translate(${yAxisWidth}, 0)`);
 
     // Draw custom yAxis lines
-    yAxisElem
-      .append("line")
-      .attr("x1", 0)
-      .attr("x2", 0)
-      .attr("y1", chartHeight - 20)
-      .attr("y2", 0)
-      .attr("stroke", slate.slate11);
+    if (showYAxis) {
+      yAxisElem
+        .append("line")
+        .attr("x1", 0)
+        .attr("x2", 0)
+        .attr("y1", chartHeight - 20)
+        .attr("y2", 0)
+        .attr("stroke", slate.slate11);
+    }
 
     yAxisTicks
       .selectAll("line")
@@ -129,15 +146,23 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
         new Date(priceData[0][0]),
         new Date(priceData[priceData.length - 1][0]),
       ])
-      .range([yAxisWidth, chartWidth]);
+      .range([showYAxis ? yAxisWidth : 0, chartWidth]);
 
     const xAxisElem = chartElem.select<SVGSVGElement>(".xAxis");
     xAxisElem.selectAll("*").remove();
 
     const xAxis = d3
       .axisBottom(x)
-      .ticks(10)
-      .tickFormat((d) => d3.timeFormat("%d %a")(d as Date));
+      .ticks(chartWidth > 1024 ? 10 : 5)
+      // .tickValues(
+      //   x.domain().filter((d, i) => {
+      //     return !(i % 10);
+      //   })
+      // )
+      .tickFormat((d) => {
+        const date = d as Date;
+        return getXAxisTickFormat(date);
+      });
 
     xAxisElem
       .attr("transform", `translate(0, ${chartHeight - 20})`)
@@ -207,7 +232,7 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
         .attr("stroke-width", 2)
         .attr("d", line);
     }, 20);
-  }, [coinMarketData?.prices, currentCurrency, chartHeight, chartWidth]);
+  }, [coinMarketData?.prices, chartWidth, chartHeight, currentCurrency]);
 
   const drawLoadingChart = useCallback(() => {
     const chartElem = d3.select(chartRef.current);
