@@ -18,8 +18,6 @@ import { windowResized } from "src/features/appSlice";
 const Home: NextPage = () => {
   const chartInfoContainerRef = useRef<HTMLDivElement>(null);
 
-  const windowUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
-
   const { coin: coinData, isLoading: coinDataLoading } = useCurrentCoinData();
 
   const dispatch = useDispatch();
@@ -37,20 +35,12 @@ const Home: NextPage = () => {
         return;
       }
 
-      if (windowUpdateTimeoutRef.current) {
-        clearTimeout(windowUpdateTimeoutRef.current);
-      }
-
-      // Because drawing the chart dynamically is intensive,
-      // only update the window dimensions after a short delay
-      windowUpdateTimeoutRef.current = setTimeout(() => {
-        dispatch(
-          windowResized({
-            windowWidth: window.innerWidth,
-            windowHeight: window.innerHeight,
-          })
-        );
-      }, 1000);
+      dispatch(
+        windowResized({
+          windowWidth: window.innerWidth,
+          windowHeight: window.innerHeight,
+        })
+      );
     };
 
     window.addEventListener("resize", updateWindowDimensions);

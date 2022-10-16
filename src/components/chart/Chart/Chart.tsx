@@ -20,14 +20,12 @@ type ChartProps = {
 const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
   const chartRef = useRef(null);
 
-  // Refs for animating chart line drawing
-  const chartDrawIndexRef = useRef(0);
-  const chartDrawIntervalRef = useRef<ReturnType<typeof setInterval>>();
-
+  const previousCoinId = useRef<string | null>(null);
   const currentCoinId = useSelector(
     (state: RootState) => state.app.currentCoinId
   );
 
+  const previousCurrency = useRef<string | null>(null);
   const currentCurrency = useSelector(
     (state: RootState) => state.app.currentCurrency
   );
@@ -37,20 +35,6 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
     "usd",
     CHART_TIMESPAN_DAYS
   );
-
-  useEffect(() => {
-    const windowResized = () => {
-      if (chartDrawIntervalRef.current) {
-        clearInterval(chartDrawIntervalRef.current);
-      }
-    };
-
-    window.addEventListener("resize", windowResized);
-
-    return () => {
-      window.removeEventListener("resize", windowResized);
-    };
-  }, []);
 
   const getXAxisTickFormat = (date: Date) => {
     if (CHART_TIMESPAN_DAYS <= 1) {
@@ -154,11 +138,6 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
     const xAxis = d3
       .axisBottom(x)
       .ticks(chartWidth > 1024 ? 10 : 5)
-      // .tickValues(
-      //   x.domain().filter((d, i) => {
-      //     return !(i % 10);
-      //   })
-      // )
       .tickFormat((d) => {
         const date = d as Date;
         return getXAxisTickFormat(date);
@@ -189,50 +168,52 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
     xAxisElem.selectAll(".tick").selectAll("line").remove();
     xAxisElem.selectAll(".domain").remove();
 
-    if (chartDrawIntervalRef.current) {
-      clearInterval(chartDrawIntervalRef.current);
-      chartDrawIndexRef.current = 0;
+    // Create chart's price line
+    const line = d3
+      .line(coinMarketData.prices)
+      .x((d) => {
+        return x(new Date(d[0]));
+      })
+      .y((d) => {
+        return y(d[1]);
+      });
+
+    const chartLineElem = chartElem
+      .select("#chartLine")
+      .datum(priceData)
+      .attr("class", "")
+      .attr("fill", "none")
+      .attr("stroke", mint.mint11)
+      .attr("stroke-width", 2)
+      .attr("stroke-dasharray", 0)
+      .attr("d", line);
+
+    // Don't animate if only the window size has changed
+    if (
+      previousCoinId.current !== currentCoinId ||
+      previousCurrency.current !== currentCurrency
+    ) {
+      const pathNode = chartLineElem.node() as SVGGeometryElement;
+
+      if (pathNode) {
+        const pathLength = pathNode.getTotalLength();
+        chartLineElem
+          .attr("stroke-dasharray", pathLength)
+          .attr("stroke-dashoffset", pathLength)
+          .transition(d3.transition().ease(d3.easeCubicInOut).duration(1500))
+          .attr("stroke-dashoffset", 0);
+      }
     }
 
-    // This will make the chart draw one point at a time to make it look animated
-    // Creates an interval which adds a point to the line data array
-    chartDrawIntervalRef.current = setInterval(() => {
-      // Make sure we don't go past the price data length
-      chartDrawIndexRef.current = Math.min(
-        chartDrawIndexRef.current + 2, // Update 2 data points at a time to reduce animation/computation time
-        priceData.length
-      );
-
-      const currentPriceData = priceData.slice(0, chartDrawIndexRef.current);
-
-      if (
-        chartDrawIntervalRef.current &&
-        chartDrawIndexRef.current >= priceData.length
-      ) {
-        clearInterval(chartDrawIntervalRef.current);
-        chartDrawIndexRef.current = 0;
-      }
-
-      // Create chart's price line
-      const line = d3
-        .line(coinMarketData.prices)
-        .x((d) => {
-          return x(new Date(d[0]));
-        })
-        .y((d) => {
-          return y(d[1]);
-        });
-
-      chartElem
-        .select("#chartLine")
-        .datum(currentPriceData)
-        .attr("class", "")
-        .attr("fill", "none")
-        .attr("stroke", mint.mint11)
-        .attr("stroke-width", 2)
-        .attr("d", line);
-    }, 20);
-  }, [coinMarketData?.prices, chartWidth, chartHeight, currentCurrency]);
+    previousCoinId.current = currentCoinId;
+    previousCurrency.current = currentCurrency;
+  }, [
+    coinMarketData?.prices,
+    chartWidth,
+    chartHeight,
+    currentCoinId,
+    currentCurrency,
+  ]);
 
   const drawLoadingChart = useCallback(() => {
     const chartElem = d3.select(chartRef.current);
@@ -330,6 +311,7 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
       .attr("fill", "none")
       .attr("stroke", slate.slate11)
       .attr("stroke-width", 2)
+      .attr("stroke-dasharray", 0)
       .attr("d", line);
   }, [chartHeight, chartWidth]);
 
