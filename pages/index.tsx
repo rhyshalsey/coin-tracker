@@ -58,16 +58,11 @@ const Home: NextPage = () => {
       return 0;
     }
 
-    if (!chartInfoContainerRef.current) {
+    if (!chartInfoContainerRef.current || !windowWidth) {
       return windowHeight;
     }
 
-    const contentHeight =
-      windowHeight - chartInfoContainerRef.current.offsetHeight;
-
-    const maxHeight = windowWidth < 768 ? windowHeight : 800;
-
-    return Math.max(500, Math.min(contentHeight, maxHeight));
+    return windowWidth > 768 ? 800 : Math.min(500, windowHeight);
   }, [windowHeight, windowWidth]);
 
   return (
