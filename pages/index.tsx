@@ -12,8 +12,9 @@ import { RootState } from "src/utils/store";
 
 import useCurrentCoinData from "src/hooks/useCurrentCoinData";
 
-import styles from "styles/pages/Home.module.scss";
 import { windowResized } from "src/features/appSlice";
+
+import styles from "styles/pages/Home.module.scss";
 
 const Home: NextPage = () => {
   const chartInfoContainerRef = useRef<HTMLDivElement>(null);
@@ -64,8 +65,10 @@ const Home: NextPage = () => {
     const contentHeight =
       windowHeight - chartInfoContainerRef.current.offsetHeight;
 
-    return Math.max(500, Math.min(contentHeight, 800));
-  }, [windowHeight]);
+    const maxHeight = windowWidth < 768 ? windowHeight : 800;
+
+    return Math.max(500, Math.min(contentHeight, maxHeight));
+  }, [windowHeight, windowWidth]);
 
   return (
     <div id={styles.homeContainer} className="page">

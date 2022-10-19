@@ -1,10 +1,14 @@
 @use "styles/variables/general";
 
 .chartContainer {
+  padding: 0 !important;
+
   svg {
     width: 100%;
     height: 100%;
-    padding: 5px 0;
+    padding: 5px 20px;
+    overflow: visible;
+    box-sizing: border-box;
 
     :global(.tick rect) {
       animation: general.pulse-animation(fill);
