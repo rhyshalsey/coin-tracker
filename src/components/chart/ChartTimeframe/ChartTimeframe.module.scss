@@ -1,0 +1,12 @@
+@use "sass:map";
+
+@use "mixins/responsive";
+
+.chartTimeframeContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+:export {
+  breakpointMedium: map.get(responsive.$breakpoints, "medium");
+}

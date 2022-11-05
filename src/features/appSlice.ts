@@ -1,10 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Timeframes } from "src/constants";
 
 export interface AppState {
   windowWidth: number;
   windowHeight: number;
   currentCoinId: string;
   currentCurrency: string;
+  chartTimeframe: Timeframes; // In days
 }
 
 const initialState: AppState = {
@@ -12,6 +14,7 @@ const initialState: AppState = {
   windowHeight: 0,
   currentCoinId: "",
   currentCurrency: "usd",
+  chartTimeframe: Timeframes.DAYS_1,
 };
 
 export const appSlice = createSlice({
@@ -31,9 +34,13 @@ export const appSlice = createSlice({
     currencyChanged: (state, action: PayloadAction<string>) => {
       state.currentCurrency = action.payload;
     },
+    timeframeChanged: (state, action: PayloadAction<Timeframes>) => {
+      state.chartTimeframe = action.payload;
+    },
   },
 });
 
-export const { windowResized, coinChanged, currencyChanged } = appSlice.actions;
+export const { windowResized, coinChanged, currencyChanged, timeframeChanged } =
+  appSlice.actions;
 
 export default appSlice.reducer;

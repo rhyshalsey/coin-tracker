@@ -15,6 +15,7 @@ import useCurrentCoinData from "src/hooks/useCurrentCoinData";
 import { windowResized } from "src/features/appSlice";
 
 import styles from "styles/pages/Home.module.scss";
+import ChartTimeframe from "@/components/chart/ChartTimeframe/ChartTimeframe";
 
 const Home: NextPage = () => {
   const chartInfoContainerRef = useRef<HTMLDivElement>(null);
@@ -94,6 +95,7 @@ const Home: NextPage = () => {
               isLoading={coinDataLoading}
             />
           </div>
+          <ChartTimeframe />
           <Chart
             chartWidth={windowWidth}
             chartHeight={calculateChartHeight()}

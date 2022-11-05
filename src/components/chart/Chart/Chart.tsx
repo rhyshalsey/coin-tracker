@@ -9,8 +9,7 @@ import { RootState } from "src/utils/store";
 import useCoinMarketData from "src/hooks/useCoinMarketData";
 
 import styles from "./Chart.module.scss";
-
-const CHART_TIMESPAN_DAYS = 1;
+import { Timeframes, timeframeValues } from "src/constants";
 
 type ChartProps = {
   chartWidth: number;
@@ -30,22 +29,16 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
     (state: RootState) => state.app.currentCurrency
   );
 
+  const previousTimeframe = useRef<string | number | null>(null);
+  const currentTimeframe = useSelector(
+    (state: RootState) => state.app.chartTimeframe
+  );
+
   const { coinMarketData, isLoading, isError } = useCoinMarketData(
     currentCoinId,
     "usd",
-    CHART_TIMESPAN_DAYS
+    timeframeValues[currentTimeframe].value
   );
-
-  const getXAxisTickFormat = (date: Date) => {
-    if (CHART_TIMESPAN_DAYS <= 1) {
-      return d3.timeFormat("%H:%M")(date);
-    } else if (CHART_TIMESPAN_DAYS > 1 && CHART_TIMESPAN_DAYS <= 90) {
-      return d3.timeFormat("%d %a")(date);
-    } else if (CHART_TIMESPAN_DAYS > 90) {
-      return d3.timeFormat("%x %d")(date);
-    }
-    return d3.timeFormat("%x")(date);
-  };
 
   const drawChart = useCallback(() => {
     if (
@@ -140,7 +133,10 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
       .ticks(chartWidth > 1024 ? 10 : 5)
       .tickFormat((d) => {
         const date = d as Date;
-        return getXAxisTickFormat(date);
+        return getXAxisTickFormat(
+          date,
+          timeframeValues[currentTimeframe].value
+        );
       });
 
     xAxisElem
@@ -191,7 +187,8 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
     // Don't animate if only the window size has changed
     if (
       previousCoinId.current !== currentCoinId ||
-      previousCurrency.current !== currentCurrency
+      previousCurrency.current !== currentCurrency ||
+      previousTimeframe.current !== currentTimeframe
     ) {
       const pathNode = chartLineElem.node() as SVGGeometryElement;
 
@@ -207,12 +204,14 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
 
     previousCoinId.current = currentCoinId;
     previousCurrency.current = currentCurrency;
+    previousTimeframe.current = currentTimeframe;
   }, [
     coinMarketData?.prices,
     chartWidth,
     chartHeight,
     currentCoinId,
     currentCurrency,
+    currentTimeframe,
   ]);
 
   const drawLoadingChart = useCallback(() => {
@@ -336,3 +335,18 @@ const Chart = ({ chartWidth, chartHeight }: ChartProps) => {
 };
 
 export default Chart;
+
+const getXAxisTickFormat = (date: Date, timeframe: number | string) => {
+  if (timeframe <= timeframeValues[Timeframes.DAYS_1].value) {
+    return d3.timeFormat("%H:%M")(date);
+  } else if (
+    timeframe > timeframeValues[Timeframes.DAYS_1].value &&
+    timeframe <= timeframeValues[Timeframes.DAYS_90].value
+  ) {
+    return d3.timeFormat("%d %a")(date);
+  } else if (timeframe > timeframeValues[Timeframes.DAYS_90].value) {
+    return d3.timeFormat("%x")(date);
+  }
+
+  return d3.timeFormat("%x")(date);
+};

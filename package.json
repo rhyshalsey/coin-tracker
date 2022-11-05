@@ -13,6 +13,7 @@
     "@headlessui/react": "^1.7.3",
     "@radix-ui/colors": "^0.1.8",
     "@radix-ui/react-progress": "^1.0.0",
+    "@radix-ui/react-radio-group": "^1.1.0",
     "@radix-ui/react-toast": "^1.0.0",
     "@reduxjs/toolkit": "^1.8.1",
     "@types/d3": "^7.4.0",
@@ -26,6 +27,7 @@
     "react-icons": "^4.6.0",
     "react-query": "^3.39.2",
     "react-redux": "^8.0.4",
+    "react-use": "^17.4.0",
     "reset-css": "^5.0.1"
   },
   "devDependencies": {

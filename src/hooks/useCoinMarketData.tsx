@@ -5,7 +5,7 @@ import { fetcher } from "src/utils/request";
 export default function useCoinMarketData(
   coinId: string,
   vsCurrency: string,
-  days: number
+  days: number | string
 ) {
   const { data, isLoading, isError } = useQuery(
     coinGeckoKeys.getCoinMarketData(coinId, vsCurrency, days),
@@ -26,7 +26,7 @@ export default function useCoinMarketData(
 async function getCoinMarketData(
   coinId: string,
   vsCurrency: string,
-  days: number
+  days: number | string
 ) {
   return await fetcher(
     `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=${vsCurrency}&days=${days}`

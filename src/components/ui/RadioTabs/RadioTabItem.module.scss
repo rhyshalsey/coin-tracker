@@ -1,0 +1,48 @@
+@use "styles/variables/colors";
+@use "styles/variables/fonts";
+@use "styles/variables/general";
+
+@use "mixins/responsive";
+
+.radioTab {
+  background: colors.$neutral-6;
+  color: colors.$neutral-11;
+  border: 1px solid colors.$neutral-6;
+
+  font-weight: bold;
+
+  padding: general.$input-padding;
+
+  font-size: fonts.$base-font-size-small;
+
+  cursor: pointer;
+
+  transition: general.input-transition(border), general.input-transition(color),
+    general.input-transition(background);
+
+  &:first-child {
+    border-top-left-radius: general.$round-corners;
+    border-bottom-left-radius: general.$round-corners;
+  }
+
+  &:last-child {
+    border-top-right-radius: general.$round-corners;
+    border-bottom-right-radius: general.$round-corners;
+  }
+
+  &:hover {
+    color: colors.$primary-12;
+    border: 1px solid colors.$primary-8;
+  }
+
+  &[data-state="checked"] {
+    color: colors.$primary-12;
+    border: 1px solid colors.$primary-9;
+    background: colors.$primary-4;
+  }
+
+  @include responsive.breakpoint-down(medium) {
+    padding: general.$input-padding;
+    font-size: fonts.$base-font-size-xsmall;
+  }
+}

@@ -2,7 +2,6 @@
 @use "styles/variables/fonts";
 @use "styles/variables/general";
 
-$search-focussed-color: colors.$primary-8;
 $search-blurred-font-color: colors.$neutral-11;
 $search-icon-width: fonts.$large-body-font-size * 2.5;
 
@@ -61,7 +60,7 @@ $list-item-icon-size: 24px;
       }
 
       &:focus {
-        outline-color: $search-focussed-color;
+        outline-color: colors.$input-focussed-outline-color;
       }
     }
   }
@@ -69,7 +68,7 @@ $list-item-icon-size: 24px;
   .searchOptionsContainer {
     position: absolute;
     z-index: general.$dropdown-z-index;
-    
+
     width: 100%;
     max-width: $search-max-width;
     margin-top: 8px;
